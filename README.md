@@ -101,7 +101,7 @@ There are a few controller methods which you can call which will return informat
 
 In order to invalidate a session you can simply invalidate it.
 
-```
+```ruby
 def logout
   auth_session.invalidate!
   redirect_to login_path, :notice => "Logged out successfully."
