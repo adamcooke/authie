@@ -17,7 +17,7 @@ module Authie
     scope :asc, -> { order(:last_activity_at => :desc) }
     
     # Attributes
-    serialize :data
+    serialize :data, Hash
     attr_accessor :controller
     
     before_create do
@@ -96,6 +96,18 @@ module Authie
       if controller
         cookies.delete(:user_session)
       end
+    end
+    
+    # Set some additional data in this session
+    def set(key, value)
+      self.data ||= {}
+      self.data[key.to_s] = value
+      self.save!
+    end
+
+    # Get some additional data from this session
+    def get(key)
+      (self.data ||= {})[key.to_s]
     end
     
     # Find a session from the database for the given controller instance.

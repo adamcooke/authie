@@ -128,3 +128,12 @@ class User < ActiveRecord::Base
   has_many :sessions, :class_name => 'Authie::Session', :foriegn_key => 'user_id', :dependent => :destroy
 end
 ```
+
+### Storing additional data in the user session
+
+If you need to store additional information in your database-backed database session, then you can use the following methods to achieve this:
+
+```ruby
+auth_session.set :two_factor_seen_at, Time.now
+auth_session.get :two_factor_seen_at
+```
