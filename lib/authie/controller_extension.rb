@@ -3,7 +3,7 @@ module Authie
     
     def self.included(base)
       base.helper_method :logged_in?, :current_user, :auth_session
-      base.before_filter :set_browser_id
+      base.before_filter :set_browser_id, :touch_auth_session
     end
     
     private
@@ -15,6 +15,13 @@ module Authie
         unless Session.where(:browser_id => proposed_browser_id).exists?
           cookies[:browser_id] = {:value => proposed_browser_id, :expires => 20.years.from_now}
         end
+      end
+    end
+    
+    # Touch the auth session on each request if logged in
+    def touch_auth_session
+      if logged_in?
+        auth_session.touch!
       end
     end
     
