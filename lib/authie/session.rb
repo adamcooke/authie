@@ -10,7 +10,7 @@ module Authie
     self.table_name = "authie_sessions"
     
     # Relationships
-    belongs_to :user, :class_name => Authie.config.user_model_class_name, :foreign_key => 'user_id'
+    belongs_to :user, :polymorphic => true
     
     # Scopes
     scope :active, -> { where(:active => true) }

@@ -10,12 +10,7 @@ module Authie
       @persistent_session_length || 2.months
     end
     attr_writer :persistent_session_length
-    
-    def user_model_class_name
-      @user_model_class_name || 'User'
-    end
-    attr_writer :user_model_class_name
-    
+        
   end
   
   def self.config

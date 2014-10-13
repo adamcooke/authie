@@ -23,7 +23,7 @@ module Authie
     
     # Set the currently logged in user
     def current_user=(user)
-      if user.is_a?(Authie.config.user_model_class_name.constantize)
+      if user
         unless logged_in?
           @auth_session = Session.start(self, :user => user)
         end
