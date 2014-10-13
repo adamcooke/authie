@@ -9,10 +9,12 @@ module Authie
     private
     
     # Set a random browser ID for this browser. 
-    # TODO: check that this is unique before setting it.
     def set_browser_id
-      unless cookies[:browser_id]
-        cookies[:browser_id] = {:value => SecureRandom.uuid, :expires => 20.years.from_now}
+      until cookies[:browser_id]
+        proposed_browser_id = SecureRandom.uuid
+        unless Session.where(:browser_id => proposed_browser_id).exists?
+          cookies[:browser_id] = {:value => proposed_browser_id, :expires => 20.years.from_now}
+        end
       end
     end
     
