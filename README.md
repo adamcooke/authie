@@ -93,7 +93,7 @@ end
 
 There are a few controller methods which you can call which will return information about the current session:
 
-* `current_user` - returns the currently logged in user model
+* `current_user` - returns the currently logged in user
 * `auth_session` - returns the current auth session
 * `logged_in?` - returns a true if there's a session or false if no user is logged in
 
