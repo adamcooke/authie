@@ -36,5 +36,13 @@ module Authie
       Session.start(self, :user => user)
     end
 
+    def current_user
+      auth_session.user
+    end
+
+    def auth_session
+      @auth_session ||= Session.get_session(self)
+    end
+
   end
 end
