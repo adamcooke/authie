@@ -51,7 +51,7 @@ you wish to login. You may have a method like this in a controller.
 ```ruby
 class AuthenticationController < ApplicationController
 
-  skip_before_filter: login_required
+  skip_before_filter :login_required
 
   def login
     if request.post?
@@ -125,7 +125,7 @@ If you want to provide users with a list of their sessions, you can access all a
 
 ```ruby
 class User < ActiveRecord::Base
-  has_many :sessions, :class_name => 'Authie::Session', :foriegn_key => 'user_id', :dependent => :destroy
+  has_many :sessions, :class_name => 'Authie::Session', :foreign_key => 'user_id', :dependent => :destroy
 end
 ```
 
