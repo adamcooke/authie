@@ -13,6 +13,7 @@ class User < ActiveRecord::Base
 end
 
 class FakeController
+
   def initialize(options = {})
     @options = options
   end
@@ -24,6 +25,7 @@ class FakeController
   def request
     @request ||= FakeRequest.new(@options)
   end
+
 end
 
 class FakeRequest

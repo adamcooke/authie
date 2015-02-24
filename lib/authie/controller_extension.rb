@@ -1,3 +1,5 @@
+require 'authie/controller_delegate'
+
 module Authie
   module ControllerExtension
 
@@ -8,49 +10,32 @@ module Authie
 
     private
 
-    # Set a random browser ID for this browser.
+    def auth_session_delegate
+      @auth_session_delegate ||= Authie::ControllerDelegate.new(self)
+    end
+
     def set_browser_id
-      until cookies[:browser_id]
-        proposed_browser_id = SecureRandom.uuid
-        unless Session.where(:browser_id => proposed_browser_id).exists?
-          cookies[:browser_id] = {:value => proposed_browser_id, :expires => 20.years.from_now}
-        end
-      end
+      auth_session_delegate.set_browser_id
     end
 
-    # Touch the auth session on each request if logged in
     def touch_auth_session
-      if logged_in?
-        auth_session.touch!
-      end
+      auth_session_delegate.touch_auth_session
     end
 
-    # Return the currently logged in user object
     def current_user
-      auth_session.user
+      auth_session_delegate.current_user
     end
 
-    # Set the currently logged in user
-    def current_user=(user)
-      if user
-        unless logged_in?
-          @auth_session = Session.start(self, :user => user)
-        end
-        @current_user = user
-      else
-        auth_session.destroy if logged_in?
-        @current_user = nil
-      end
+    def current_user=(*args)
+      auth_session_delegate.current_user(*args)
     end
 
-    # Is anyone currently logged in?
     def logged_in?
-      auth_session.is_a?(Session)
+      auth_session_delegate.logged_in?
     end
 
-    # Return the currently logged in user session
     def auth_session
-      @auth_session ||= Session.get_session(self)
+      auth_session_delegate.auth_session
     end
 
   end
