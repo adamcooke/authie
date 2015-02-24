@@ -1,14 +1,14 @@
 module Authie
   module ControllerExtension
-    
+
     def self.included(base)
       base.helper_method :logged_in?, :current_user, :auth_session
       base.before_filter :set_browser_id, :touch_auth_session
     end
-    
+
     private
-    
-    # Set a random browser ID for this browser. 
+
+    # Set a random browser ID for this browser.
     def set_browser_id
       until cookies[:browser_id]
         proposed_browser_id = SecureRandom.uuid
@@ -17,19 +17,19 @@ module Authie
         end
       end
     end
-    
+
     # Touch the auth session on each request if logged in
     def touch_auth_session
       if logged_in?
         auth_session.touch!
       end
     end
-    
+
     # Return the currently logged in user object
     def current_user
       auth_session.user
     end
-    
+
     # Set the currently logged in user
     def current_user=(user)
       if user
@@ -42,16 +42,16 @@ module Authie
         @current_user = nil
       end
     end
-    
+
     # Is anyone currently logged in?
     def logged_in?
       auth_session.is_a?(Session)
     end
-    
+
     # Return the currently logged in user session
     def auth_session
       @auth_session ||= Session.get_session(self)
     end
-    
+
   end
 end
