@@ -8,6 +8,11 @@ The "traditional" way of simply setting a user ID in your session is insecure
 and unwise. If you simply do something like the example below, it means that anyone
 with access to the session cookie can login as the user whenever and wherever they wish.
 
+To clarify: while by default Rails session cookies are encrypted, there is
+nothing to allow them to be invalidated if someone were to "steal" an encrypted
+cookie from an authenticated user. This could be stolen using a MITM attack or
+simply by stealing it directly from their browser when they're off getting a coffee.
+
 ```ruby
 if user = User.authenticate(params[:username], params[:password])
   # Don't do this...
@@ -32,7 +37,7 @@ As usual, just pop this in your Gemfile:
 gem 'authie', '~> 1.0.0'
 ```
 
-You will then need to run your `db:migrate` task to add the Authie sessions table 
+You will then need to run your `db:migrate` task to add the Authie sessions table
 to your local database.
 
 ```
@@ -70,22 +75,22 @@ end
 ### Checking whether user's are logged in
 
 On any subsequent request, you should make sure that your user is logged in.
-You may wish to implement a `login_required` controller method which is called 
+You may wish to implement a `login_required` controller method which is called
 before every action in your application.
 
 ```ruby
 class ApplicationController < ActionController::Base
-  
+
   before_filter :login_required
-  
+
   private
-  
+
   def login_required
     unless logged_in?
       redirect_to login_path, :alert => "You must login to view this resource"
     end
   end
-  
+
 end
 ```
 
