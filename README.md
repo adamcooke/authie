@@ -34,7 +34,7 @@ The design goals behind Authie are:
 As usual, just pop this in your Gemfile:
 
 ```ruby
-gem 'authie', '~> 1.0.0'
+gem 'authie', '~> 1.1'
 ```
 
 You will then need to run your `db:migrate` task to add the Authie sessions table
