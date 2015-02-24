@@ -26,8 +26,8 @@ module Authie
       auth_session_delegate.current_user
     end
 
-    def current_user=(*args)
-      auth_session_delegate.current_user(*args)
+    def current_user=(user)
+      auth_session_delegate.current_user = user
     end
 
     def logged_in?
