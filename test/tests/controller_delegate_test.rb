@@ -36,4 +36,12 @@ class ControllerDelegateTest < Minitest::Test
     assert_equal '127.0.0.1', @delegate.auth_session.last_activity_ip
   end
 
+  def test_touching_auth_sessions_raises_errors
+    @delegate.current_user = User.create(:username => 'dave')
+    assert @delegate.auth_session.invalidate!
+    assert_raises Authie::Session::InactiveSession do
+      @delegate.touch_auth_session
+    end
+  end
+
 end
