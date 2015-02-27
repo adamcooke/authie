@@ -29,6 +29,14 @@ The design goals behind Authie are:
 * Sessions should automatically expire after a certain period of inactivity.
 * Sessions can be either permanent or temporary.
 
+## Version 1.1.1
+
+An issue was identified regarding the way sessions are invalidated when they
+become invalid. In versions < 1.1.0, sessions which expire while they are in
+use are not invalidated. This is fixed in => 1.1.1 and I strongly recommend
+that everyone is running this version or higher to benefit from all the
+functionality in Authie.
+
 ## Installation
 
 As usual, just pop this in your Gemfile:
