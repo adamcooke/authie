@@ -29,7 +29,7 @@ The design goals behind Authie are:
 * Sessions should automatically expire after a certain period of inactivity.
 * Sessions can be either permanent or temporary.
 
-## Version 1.1.1
+## Important notice...
 
 An issue was identified regarding the way sessions are invalidated when they
 become invalid. In versions < 1.1.0, sessions which expire while they are in
