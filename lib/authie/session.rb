@@ -36,6 +36,7 @@ module Authie
     # This method should be called each time a user performs an
     # action while authenticated with this session.
     def touch!
+      self.check_security!
       self.last_activity_at = Time.now
       self.last_activity_ip = controller.request.ip
       self.last_activity_path = controller.request.path

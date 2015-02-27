@@ -112,6 +112,21 @@ class SessionTest < Minitest::Test
     assert_equal "/demo", session.last_activity_path
   end
 
+  def test_touching_sessions_while_invalid_raises_an_error
+    controller = FakeController.new
+    # Make a session
+    assert session = Authie::Session.start(controller)
+    # Test the session can be touched
+    assert session.touch!
+    # Invalidate the session
+    session.invalidate!
+    # Test that touching the session causes an error to be
+    # raised about the inactive session.
+    assert_raises Authie::Session::InactiveSession do
+      session.touch!
+    end
+  end
+
   def test_sessions_can_have_arbitary_data_stored_within
     controller = FakeController.new
     # Make a session
