@@ -126,7 +126,6 @@ module Authie
         session.controller = controller
         session
       else
-        cookies.delete(:user_session)
         :none
       end
     end
