@@ -228,4 +228,24 @@ class SessionTest < Minitest::Test
     assert_equal '127.0.0.1', session.two_factored_ip
   end
 
+  def test_user_impersonation
+    user1 = User.create(:username => 'tester1')
+    user2 = User.create(:username => 'tester2')
+    controller = FakeController.new
+    # Make a new session for the original user
+    assert session = Authie::Session.start(controller, :user => user1)
+    # Impersonate a user and test that a new session is returned
+    assert new_session = session.impersonate!(user2)
+    assert_equal Authie::Session, new_session.class
+    assert_equal session, new_session.parent
+    assert_equal user2, new_session.user
+    # Test that the controller's session cookie is the new session
+    assert_equal new_session.token, controller.cookies[:user_session]
+    # Test reverting to the parent controller
+    assert original_session = new_session.revert_to_parent!
+    assert_equal original_session, session
+    assert_equal session.token, controller.cookies[:user_session]
+    assert_equal user1, original_session.user
+  end
+
 end

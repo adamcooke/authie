@@ -5,6 +5,7 @@ module Authie
     class InactiveSession < Error; end
     class ExpiredSession < Error; end
     class BrowserMismatch < Error; end
+    class NoParentSessionForRevert < Error; end
 
     # Set table name
     self.table_name = "authie_sessions"
@@ -147,6 +148,24 @@ module Authie
       self.two_factored_at = Time.now
       self.two_factored_ip = controller.request.ip
       self.save!
+    end
+
+    # Create a new session for impersonating for the given user
+    def impersonate!(user)
+      self.class.start(controller, :user => user, :parent => self)
+    end
+
+    # Revert back to the parent session
+    def revert_to_parent!
+      if self.parent
+        self.invalidate!
+        self.parent.activate!
+        self.parent.controller = self.controller
+        self.parent.set_cookie!
+        self.parent
+      else
+        raise NoParentSessionForRevert, "Session does not have a parent therefore cannot be reverted."
+      end
     end
 
     # Find a session from the database for the given controller instance.
