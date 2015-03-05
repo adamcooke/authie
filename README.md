@@ -110,6 +110,34 @@ There are a few controller methods which you can call which will return informat
 * `auth_session` - returns the current auth session
 * `logged_in?` - returns a true if there's a session or false if no user is logged in
 
+### Session errors
+
+If there is an issue with an auth session, an error will be raised which you need
+to catch within your application. The errors which will be raised are:
+
+* `Authie::Session::InactiveSession` - is raised when a session has been de-activated.
+* `Authie::Session::ExpiredSession` - is raised when a session expires.
+* `Authie::Session::BrowserMismatch` - is raised when the browser ID provided does
+  not match the browser ID associated with the session token provided.
+
+The easiest way to rescue these to use a `rescue_from`. For example:
+
+```ruby
+class ApplicationController < ActionController::Base
+
+  rescue_from Authie::Session::InactiveSession, :with => :auth_session_error
+  rescue_from Authie::Session::ExpiredSession, :with => :auth_session_error
+  rescue_from Authie::Session::BrowserMismatch, :with => :auth_session_error
+
+  private
+
+  def auth_session_error
+    redirect_to login_path, :alert => "Your session is no longer valid. Please login again to continue..."
+  end
+
+end
+```
+
 ### Logging out
 
 In order to invalidate a session you can simply invalidate it.
