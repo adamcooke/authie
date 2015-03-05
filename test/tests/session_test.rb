@@ -177,4 +177,25 @@ class SessionTest < Minitest::Test
     assert_equal 2, session.requests
   end
 
+  def test_sessions_can_invalidate_all_other_sessions_for_a_user
+    user = User.create(:username => 'tester')
+    # Make some sessions for a new in lots of controllers
+    assert session1 = Authie::Session.start(FakeController.new(:browser_id => 'b1'), :user => user)
+    assert session2 = Authie::Session.start(FakeController.new(:browser_id => 'b2'), :user => user)
+    assert session3 = Authie::Session.start(FakeController.new(:browser_id => 'b3'), :user => user)
+    # Reload all the sessions
+    session1.reload; session2.reload; session3.reload
+    # Test they're all active
+    assert_equal true, session1.active?
+    assert_equal true, session2.active?
+    assert_equal true, session3.active?
+    # Test that invalidating all sessions for a given session invalidates all
+    # but the current session
+    assert session1.invalidate_others!
+    session1.reload; session2.reload; session3.reload
+    assert_equal true, session1.active?
+    assert_equal false, session2.active?
+    assert_equal false, session3.active?
+  end
+
 end

@@ -150,3 +150,18 @@ If you need to store additional information in your database-backed database ses
 auth_session.set :two_factor_seen_at, Time.now
 auth_session.get :two_factor_seen_at
 ```
+
+### Invalidating all but current session
+
+You may wish to allow users to easily invalidate all sessions which aren't their
+current one. Some applications invalidate old sessions whenever a user changes
+their password. The `invalidate_others!` method can be called on any
+`Authie::Session` object and will invalidate all sessions which aren't itself.
+
+```ruby
+def change_password
+  if @user.change_password(params[:new_password])
+    auth_session.invalidate_others!
+  end
+end
+```

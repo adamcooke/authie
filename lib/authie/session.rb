@@ -119,6 +119,13 @@ module Authie
       (self.data ||= {})[key.to_s]
     end
 
+    # Invalidate all sessions but this one for this user
+    def invalidate_others!
+      self.class.where.not(:id => self.id).where(:user => self.user).each do |s|
+        s.invalidate!
+      end
+    end
+
     # Find a session from the database for the given controller instance.
     # Returns a session object or :none if no session is found.
     def self.get_session(controller)
