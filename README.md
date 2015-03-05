@@ -135,13 +135,23 @@ This does not apply if the session is marked as persistent. See below.
 
 ### Persisting sessions
 
-In some cases, you may wish users to have a permanent sessions. In this case, you should ask users after they have logged in if they wish to "persist" their session across browser restarts. If they do wish to do this, just do something like this:
+In some cases, you may wish users to have a permanent sessions. In this case,
+you should ask users after they have logged in if they wish to "persist" their
+session across browser restarts. If they do wish to do this, just do something
+like this:
 
 ```ruby
 def persist_session
   auth_session.persist!
   redirect_to root_path, :notice => "You will now be remembered!"
 end
+```
+
+By default, persistent sessions will last for 2 months before requring the user
+logs in again. You can increase this if needed:
+
+```ruby
+Authie.config.persistent_session_length = 12.months
 ```
 
 ### Accessing all user sessions
