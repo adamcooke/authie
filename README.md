@@ -240,6 +240,9 @@ class AdminController < ApplicationController
 end
 ```
 
+If when you call `revert_to_parent!` you are not currently using an impersonation
+session, a `Authie::Session::NoParentSessionForRevert` exception will be raised.
+
 ### Sudo functions
 
 In some applications, you may want to require that the user has recently provided
