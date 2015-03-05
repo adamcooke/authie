@@ -44,4 +44,16 @@ class ControllerDelegateTest < Minitest::Test
     end
   end
 
+  def test_user_impersonation
+    user1 = User.create(:username => 'steve')
+    user2 = User.create(:username => 'mike')
+    @delegate.current_user = user1
+    # Test the current user is our current user
+    assert_equal user1, @delegate.current_user
+    # Test that we can impersonate the other user
+    assert @delegate.auth_session.impersonate!(user2)
+    # The current user remained unchanged. This is the desired behavour.
+    assert_equal user1, @delegate.current_user
+  end
+
 end
