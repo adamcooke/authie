@@ -166,4 +166,15 @@ class SessionTest < Minitest::Test
     assert_equal session, user.sessions.first
   end
 
+  def test_request_count_increments_on_touch
+    controller = FakeController.new
+    assert session = Authie::Session.start(controller)
+    # Test we start with no rrequests
+    assert_equal 0, session.requests
+    assert session.touch!
+    assert_equal 1, session.requests
+    assert session.touch!
+    assert_equal 2, session.requests
+  end
+
 end

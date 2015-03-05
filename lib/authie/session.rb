@@ -40,6 +40,7 @@ module Authie
       self.last_activity_at = Time.now
       self.last_activity_ip = controller.request.ip
       self.last_activity_path = controller.request.path
+      self.requests += 1
       self.save!
     end
 
