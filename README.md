@@ -121,6 +121,18 @@ def logout
 end
 ```
 
+### Default session length
+
+By default, a session will last for however long it is being actively used in
+browser. If the user stops using your application, the session will last for
+12 hours before becoming invalid. You can change this:
+
+```ruby
+Authie.config.session_inactivity_timeout = 2.hours
+```
+
+This does not apply if the session is marked as persistent. See below.
+
 ### Persisting sessions
 
 In some cases, you may wish users to have a permanent sessions. In this case, you should ask users after they have logged in if they wish to "persist" their session across browser restarts. If they do wish to do this, just do something like this:
