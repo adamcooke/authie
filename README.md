@@ -198,3 +198,10 @@ def change_password
   end
 end
 ```
+
+By default, a password will be said to have been recently seen if it has been
+seen in the last 10 minutes. You can change this configuration if needed:
+
+```ruby
+Authie.config.sudo_timeout = 30.minutes
+```
