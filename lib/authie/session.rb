@@ -126,6 +126,17 @@ module Authie
       end
     end
 
+    # Note that we have just seen the user enter their password.
+    def see_password!
+      self.password_seen_at = Time.now
+      self.save!
+    end
+
+    # Have we seen the user's password recently in this sesion?
+    def recently_seen_password?
+      !!(self.password_seen_at && self.password_seen_at >= Authie.config.sudo_session_timeout.ago)
+    end
+
     # Find a session from the database for the given controller instance.
     # Returns a session object or :none if no session is found.
     def self.get_session(controller)

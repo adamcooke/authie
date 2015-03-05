@@ -11,6 +11,11 @@ module Authie
     end
     attr_writer :persistent_session_length
 
+    def sudo_session_timeout
+      @sudo_session_timeout || 10.minutes
+    end
+    attr_writer :sudo_session_timeout
+
   end
 
   def self.config

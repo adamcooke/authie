@@ -165,3 +165,36 @@ def change_password
   end
 end
 ```
+
+### Sudo functions
+
+In some applications, you may want to require that the user has recently provided
+their password to you before executing certain sensitive actions. Authie provides
+some methods which can help you keep track of when a user last provided their
+password in a session and whether you need to prompt them before continuing.
+
+```ruby
+# When the user logs into your application, run the see_password! method to note
+# that we have just seen their password.
+def login
+  if user = User.authenticate(params[:username], params[:password])
+    self.current_user = user
+    auth_session.see_password!
+    redirect_to root_path
+  end
+end
+
+# Before executing any dangerous actions, check to see whether the password has
+# recently been seen.
+def change_password
+  if auth_session.recently_seen_password?
+    # Allow the user to change their password as normal.
+  else
+    # Redirect the user a page which allows them to re-enter their password.
+    # The method here should verify the password is correct and call the
+    # see_password! method as above. Once verified, you can return them back to
+    # this page.
+    redirect_to reauth_path(:return_to => request.fullpath)
+  end
+end
+```

@@ -198,4 +198,20 @@ class SessionTest < Minitest::Test
     assert_equal false, session3.active?
   end
 
+  def test_sudo_functions!
+    user = User.create(:username => 'tester')
+    controller = FakeController.new
+    # Make a session
+    assert session = Authie::Session.start(controller, :user => user)
+    assert_equal nil, session.password_seen_at
+    assert_equal false, session.recently_seen_password?
+    # Test that you can mark as password as seen
+    assert session.see_password!
+    assert_equal Time, session.password_seen_at.class
+    assert_equal true, session.recently_seen_password?
+    # Test that older passwords are not seen recently
+    session.update!(:password_seen_at => 2.hours.ago)
+    assert_equal false, session.recently_seen_password?
+  end
+
 end
