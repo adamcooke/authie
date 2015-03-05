@@ -137,6 +137,18 @@ module Authie
       !!(self.password_seen_at && self.password_seen_at >= Authie.config.sudo_session_timeout.ago)
     end
 
+    # Is two factor authentication required for this request?
+    def two_factored?
+      !!(two_factored_at || self.parent_id)
+    end
+
+    # Mark this request as two factor authoritsed
+    def mark_as_two_factored!
+      self.two_factored_at = Time.now
+      self.two_factored_ip = controller.request.ip
+      self.save!
+    end
+
     # Find a session from the database for the given controller instance.
     # Returns a session object or :none if no session is found.
     def self.get_session(controller)

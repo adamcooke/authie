@@ -214,4 +214,18 @@ class SessionTest < Minitest::Test
     assert_equal false, session.recently_seen_password?
   end
 
+  def test_two_factor_functions
+    user = User.create(:username => 'tester')
+    controller = FakeController.new
+    assert session = Authie::Session.start(controller, :user => user)
+    # Test that the session isn't two factored
+    assert_equal false, session.two_factored?
+    # Mark the session has two-factored
+    assert session.mark_as_two_factored!
+    # Test that the session is now marked as two factored
+    assert_equal true, session.two_factored?
+    assert_equal Time, session.two_factored_at.class
+    assert_equal '127.0.0.1', session.two_factored_ip
+  end
+
 end

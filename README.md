@@ -227,3 +227,48 @@ seen in the last 10 minutes. You can change this configuration if needed:
 ```ruby
 Authie.config.sudo_timeout = 30.minutes
 ```
+
+### Working with two factor authentication
+
+Authie provides a couple of methods to help you determine when two factor
+authentication is required for a request. Whenever a user logs in and has
+enabled two factor authentication, you can mark sessions as being permitted.
+
+You can add the following to your application controller and ensure that it runs
+on every request to your application.
+
+```ruby
+class ApplicationController < ActionController::Base
+
+  before_filter :check_two_factor_auth
+
+  def check_two_factor_auth
+    if logged_in? && current_user.has_two_factor_auth? && !auth_session.two_factored?
+      # If the user has two factor auth enabled, and we haven't already checked it
+      # in this auth session, redirect the user to an action which prompts the user
+      # to do their two factor auth check.
+      flash[:two_factor_return_path] = request.fullpath
+      redirect_to two_factor_auth_path
+    end
+  end
+
+end
+```
+
+Then, on your two factor auth action, you need to ensure that you mark the auth
+session as being verified with two factor auth.
+
+```ruby
+class LoginController < ApplicationController
+
+  skip_before_filter :check_two_factor_auth
+
+  def two_factor_auth
+    if user.verify_two_factor_token(params[:token])
+      auth_session.mark_as_two_factored!
+      redirect_to flash[:two_factor_return_path] || root_path, :notice => "Logged in successfully!"
+    end
+  end
+
+end
+```
