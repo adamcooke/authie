@@ -110,7 +110,7 @@ There are a few controller methods which you can call which will return informat
 * `auth_session` - returns the current auth session
 * `logged_in?` - returns a true if there's a session or false if no user is logged in
 
-### Session errors
+### Catching session errors
 
 If there is an issue with an auth session, an error will be raised which you need
 to catch within your application. The errors which will be raised are:
