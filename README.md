@@ -234,7 +234,7 @@ class AdminController < ApplicationController
 
   def revert_session
     auth_session.revert_to_parent!
-    redirect_to root_path, :notice => "You are not logged in as #{current_user.username}"
+    redirect_to root_path, :notice => "Welcome back."
   end
 
 end
