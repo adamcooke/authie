@@ -24,7 +24,7 @@ module Authie
 
     # Return the currently logged in user object
     def current_user
-      auth_session.user
+      logged_in? ? auth_session.user : nil
     end
 
     # Set the currently logged in user

@@ -56,4 +56,8 @@ class ControllerDelegateTest < Minitest::Test
     assert_equal user1, @delegate.current_user
   end
 
+  def test_current_user_returns_nil_when_not_logged_in
+    assert_equal nil, @delegate.current_user
+  end
+
 end
