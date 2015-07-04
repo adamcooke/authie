@@ -5,7 +5,7 @@ module Authie
 
     def self.included(base)
       base.helper_method :logged_in?, :current_user, :auth_session
-      base.before_filter :set_browser_id, :touch_auth_session
+      base.before_action :set_browser_id, :touch_auth_session
     end
 
     private
