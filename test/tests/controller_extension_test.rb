@@ -2,12 +2,12 @@ require 'authie/controller_extension'
 
 class ExtendedController < FakeController
 
-  def self.before_filters
-    @before_filters ||= []
+  def self.before_actions
+    @before_actions ||= []
   end
 
-  def self.before_filter(*names)
-    names.each { |n| before_filters << n }
+  def self.before_action(*names)
+    names.each { |n| before_actions << n }
   end
 
   def self.helper_methods
@@ -32,9 +32,9 @@ class ControllerExtensionTest < Minitest::Test
     assert_equal Authie::ControllerDelegate, @controller.send(:auth_session_delegate).class
   end
 
-  def test_before_filters_are_added
-    assert @controller.class.before_filters.include?(:set_browser_id)
-    assert @controller.class.before_filters.include?(:touch_auth_session)
+  def test_before_actions_are_added
+    assert @controller.class.before_actions.include?(:set_browser_id)
+    assert @controller.class.before_actions.include?(:touch_auth_session)
   end
 
   def test_helper_methods_are_added

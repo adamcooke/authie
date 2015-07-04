@@ -64,7 +64,7 @@ you wish to login. You may have a method like this in a controller.
 ```ruby
 class AuthenticationController < ApplicationController
 
-  skip_before_filter :login_required
+  skip_before_action :login_required
 
   def login
     if request.post?
@@ -89,7 +89,7 @@ before every action in your application.
 ```ruby
 class ApplicationController < ActionController::Base
 
-  before_filter :login_required
+  before_action :login_required
 
   private
 
@@ -295,7 +295,7 @@ on every request to your application.
 ```ruby
 class ApplicationController < ActionController::Base
 
-  before_filter :check_two_factor_auth
+  before_action :check_two_factor_auth
 
   def check_two_factor_auth
     if logged_in? && current_user.has_two_factor_auth? && !auth_session.two_factored?
@@ -316,7 +316,7 @@ session as being verified with two factor auth.
 ```ruby
 class LoginController < ApplicationController
 
-  skip_before_filter :check_two_factor_auth
+  skip_before_action :check_two_factor_auth
 
   def two_factor_auth
     if user.verify_two_factor_token(params[:token])
