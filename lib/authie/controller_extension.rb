@@ -5,7 +5,8 @@ module Authie
 
     def self.included(base)
       base.helper_method :logged_in?, :current_user, :auth_session
-      base.before_action :set_browser_id, :touch_auth_session
+      before_action_method = base.respond_to?(:before_action) ? :before_action : :before_filter
+      base.public_send(before_action_method, :set_browser_id, :touch_auth_session)
     end
 
     private
