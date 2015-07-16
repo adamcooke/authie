@@ -17,7 +17,7 @@ module Authie
     attr_writer :sudo_session_timeout
 
     def user_relationship_options
-      @user_relationship_options || {}
+      @user_relationship_options ||= {}
     end
 
   end
