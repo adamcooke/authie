@@ -11,7 +11,7 @@ module Authie
     self.table_name = "authie_sessions"
 
     # Relationships
-    belongs_to :user, :polymorphic => true
+    belongs_to :user, {:polymorphic => true}.merge(Authie.config.user_relationship_options)
     belongs_to :parent, :class_name => "Authie::Session"
 
     # Scopes
