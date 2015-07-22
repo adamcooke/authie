@@ -86,6 +86,24 @@ class SessionTest < Minitest::Test
     end
   end
 
+  def test_sessions_are_expired
+    controller = FakeController.new
+    # Make a session
+    assert session = Authie::Session.start(controller)
+    # Don't use the session for an hour
+    assert session.update(:expires_at => 10.minutes.ago)
+    assert_equal true, session.expired?
+  end
+
+  def test_sessions_are_inactive
+    controller = FakeController.new
+    # Make a session
+    assert session = Authie::Session.start(controller)
+    # Don't use the session for an hour
+    assert session.update(:last_activity_at => (Authie.config.session_inactivity_timeout + 1.minute).ago)
+    assert_equal true, session.inactive?
+  end
+
   def test_cookie_properties_are_set
     controller = FakeController.new
     # Make a session

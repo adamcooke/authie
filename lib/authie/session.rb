@@ -68,16 +68,29 @@ module Authie
           raise InactiveSession, "Session is no longer active"
         end
 
-        if self.expires_at && self.expires_at < Time.now
+        if self.expired?
           invalidate!
           raise ExpiredSession, "Persistent session has expired"
         end
 
-        if self.expires_at.nil? && self.last_activity_at && self.last_activity_at < Authie.config.session_inactivity_timeout.ago
+        if self.inactive?
           invalidate!
           raise InactiveSession, "Non-persistent session has expired"
         end
       end
+    end
+
+    # Has this persistent session expired?
+    def expired?
+      self.expires_at &&
+      self.expires_at < Time.now
+    end
+
+    # Has a non-persistent session become inactive?
+    def inactive?
+      self.expires_at.nil? &&
+      self.last_activity_at &&
+      self.last_activity_at < Authie.config.session_inactivity_timeout.ago
     end
 
     # Allow this session to persist rather than expiring at the end of the
