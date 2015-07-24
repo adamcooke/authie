@@ -37,7 +37,11 @@ module Authie
     end
 
     def current_user
-      auth_session.user
+      if auth_session.is_a?(Session)
+        auth_session.user
+      else
+        nil
+      end
     end
 
     def auth_session
