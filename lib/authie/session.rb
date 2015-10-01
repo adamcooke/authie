@@ -22,6 +22,12 @@ module Authie
     serialize :data, Hash
     attr_accessor :controller
 
+    before_validation do
+      if self.user_agent.is_a?(String)
+        self.user_agent = self.user_agent[0,255]
+      end
+    end
+
     before_create do
       self.token = SecureRandom.base64(32)
       if controller
