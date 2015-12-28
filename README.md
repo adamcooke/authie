@@ -42,13 +42,14 @@ functionality in Authie.
 As usual, just pop this in your Gemfile:
 
 ```ruby
-gem 'authie', '~> 1.1'
+gem 'authie', '~> 2.0'
 ```
 
-You will then need to run your `db:migrate` task to add the Authie sessions table
-to your local database.
+You will then need add the database tables Authie needs to your database. You
+should copy Authie's migrations and then migrate.
 
 ```
+rails generate authie:install:migrations
 rake db:migrate
 ```
 

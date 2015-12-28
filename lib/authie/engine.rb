@@ -1,11 +1,9 @@
 module Authie
   class Engine < ::Rails::Engine
 
-    initializer 'authie.initialize' do |app|
-      config.paths["db/migrate"].expanded.each do |expanded_path|
-        app.config.paths["db/migrate"] << expanded_path
-      end
+    engine_name 'authie'
 
+    initializer 'authie.initialize' do |app|
       ActiveSupport.on_load :active_record do
         require 'authie/session'
       end
