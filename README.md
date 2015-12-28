@@ -45,6 +45,11 @@ rails generate authie:install:migrations
 rake db:migrate
 ```
 
+**Note:** the way database migrations are handled has been changed between 1.x
+and 2.x. In 1.x, migrations were kept in the gem however in 2.x they are copied
+to your application's `db/migrate` folder. These two techniques are not compatible
+with each other. There is no clear upgrade path from 1.x to 2.x at present.
+
 ## Usage
 
 Authie is just a session manager and doesn't provide any functionality for your authentication or User models. Your `User` model should implement any methods needed to authenticate a username & password.
