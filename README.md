@@ -41,7 +41,7 @@ You will then need add the database tables Authie needs to your database. You
 should copy Authie's migrations and then migrate.
 
 ```
-rails generate authie:install:migrations
+rake authie:install:migrations
 rake db:migrate
 ```
 
