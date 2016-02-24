@@ -12,7 +12,11 @@ module Authie
 
     # Relationships
     belongs_to :user, {:polymorphic => true}.merge(Authie.config.user_relationship_options)
-    belongs_to :parent, :class_name => "Authie::Session"
+    parent_options = {:class_name => "Authie::Session"}
+    if ActiveRecord::VERSION::MAJOR >= 5
+      parent_options[:optional] = true
+    end
+    belongs_to :parent, parent_options
 
     # Scopes
     scope :active, -> { where(:active => true) }
@@ -209,7 +213,7 @@ module Authie
       session.browser_id = cookies[:browser_id]
       session.login_at = Time.now
       session.login_ip = controller.request.ip
-      session.save
+      session.save!
       session
     end
 
