@@ -9,8 +9,10 @@ module Authie
       end
 
       ActiveSupport.on_load :action_controller do
-        require 'authie/controller_extension'
-        include Authie::ControllerExtension
+        if self == ActionController::Base
+          require 'authie/controller_extension'
+          include Authie::ControllerExtension
+        end
       end
 
     end
