@@ -230,6 +230,14 @@ module Authie
       Digest::SHA256.hexdigest(token)
     end
 
+    # Convert all existing active sessions to store their tokens in the database
+    def self.convert_tokens_to_hashes
+      active.each do |s|
+        hash = self.hash_token(s.token)
+        self.where(:id => s.id).update_all(:token_hash => hash, :token => nil)
+      end
+    end
+
     private
 
     # Return all cookies on the associated controller
