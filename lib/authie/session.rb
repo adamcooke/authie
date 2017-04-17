@@ -222,7 +222,10 @@ module Authie
 
     # Cleanup any old sessions.
     def self.cleanup
+      # Invalidate transient sessions that haven't been used
       self.active.where("expires_at IS NULL AND last_activity_at < ?", Authie.config.session_inactivity_timeout.ago).each(&:invalidate!)
+      # Invalidate persistent sessions that have expired
+      self.active.where("expires_at < ?", Time.now).each(&:invalidate!)
     end
 
     # Return a hash of a given token
