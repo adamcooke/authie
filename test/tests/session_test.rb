@@ -18,7 +18,7 @@ class SessionTest < Minitest::Test
     # Test newly created sessions are not persisted
     assert_equal false, session.persistent?
     # Test that the login cookie is set in cookies
-    assert_equal session.token, controller.cookies[:user_session]
+    assert_equal session.token_hash, Authie::Session.hash_token(controller.cookies[:user_session])
   end
 
   def test_sessions_can_be_retreived_from_controller
@@ -37,7 +37,7 @@ class SessionTest < Minitest::Test
     other_controller = FakeController.new(:browser_id => 'new')
     # Load the session ID into the new controller to simulate someone
     # stealing the cookie into a new browser
-    other_controller.cookies[:user_session] = session.token
+    other_controller.cookies[:user_session] = session.temporary_token
     assert new_session = Authie::Session.get_session(other_controller)
     # Test that the security check raises an error
     assert_raises Authie::Session::BrowserMismatch do
@@ -45,6 +45,33 @@ class SessionTest < Minitest::Test
     end
     # Test the new session has been invalidated
     assert_equal false, new_session.active?
+  end
+
+  def test_new_cookie_is_written_when_persisting
+    controller = FakeController.new
+    # Test session can be started
+    assert session = Authie::Session.start(controller)
+    # Test newly created sessions are not persisted
+    assert_equal false, session.persistent?
+    assert_equal nil, controller.cookies.expiry_for(:user_session)
+    assert_equal session.token_hash, Authie::Session.hash_token(controller.cookies[:user_session])
+    # Persist
+    session.persist!
+    # Check the new cookie is suitable
+    assert controller.cookies.expiry_for(:user_session).is_a?(Time)
+    assert_equal session.token_hash, Authie::Session.hash_token(controller.cookies[:user_session])
+  end
+
+  def test_the_raw_token_is_available_when_looked_up
+    controller = FakeController.new
+    # Put a session into our controller
+    original_session = Authie::Session.start(controller)
+    assert controller.cookies[:user_session].is_a?(String)
+    assert_equal 44, controller.cookies[:user_session].size
+    # Get it back out again
+    session = Authie::Session.get_session(controller)
+    assert session.temporary_token.is_a?(String)
+    assert_equal original_session.temporary_token, session.temporary_token
   end
 
   def test_using_inactive_sessions_fails
@@ -111,7 +138,7 @@ class SessionTest < Minitest::Test
     # Test the values on the cookie
     assert_equal true, controller.cookies.raw[:user_session][:httponly]
     assert_equal true, controller.cookies.raw[:user_session][:secure]
-    assert_equal session.token, controller.cookies.raw[:user_session][:value]
+    assert_equal session.token_hash, Authie::Session.hash_token(controller.cookies.raw[:user_session][:value])
     assert_equal session.expires_at, controller.cookies.raw[:user_session][:expires]
   end
 
@@ -258,11 +285,11 @@ class SessionTest < Minitest::Test
     assert_equal session, new_session.parent
     assert_equal user2, new_session.user
     # Test that the controller's session cookie is the new session
-    assert_equal new_session.token, controller.cookies[:user_session]
+    assert_equal new_session.token_hash, Authie::Session.hash_token(controller.cookies[:user_session])
     # Test reverting to the parent controller
     assert original_session = new_session.revert_to_parent!
     assert_equal original_session, session
-    assert_equal session.token, controller.cookies[:user_session]
+    assert_equal session.token_hash, Authie::Session.hash_token(controller.cookies[:user_session])
     assert_equal user1, original_session.user
   end
 

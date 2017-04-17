@@ -70,6 +70,15 @@ class FakeCookieJar
     end
   end
 
+  def expiry_for(key)
+    value = @raw[key.to_sym]
+    if value.is_a?(Hash)
+      value[:expires]
+    else
+      nil
+    end
+  end
+
   def []=(key, value)
     @raw[key.to_sym] = value
   end

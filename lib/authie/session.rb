@@ -25,6 +25,7 @@ module Authie
     # Attributes
     serialize :data, Hash
     attr_accessor :controller
+    attr_accessor :temporary_token
 
     before_validation do
       if self.user_agent.is_a?(String)
@@ -33,7 +34,8 @@ module Authie
     end
 
     before_create do
-      self.token = SecureRandom.base64(32)
+      self.temporary_token = SecureRandom.base64(32)
+      self.token_hash = self.class.hash_token(self.temporary_token)
       if controller
         self.user_agent = controller.request.user_agent
         set_cookie!
@@ -58,7 +60,7 @@ module Authie
     # Sets the cookie on the associated controller.
     def set_cookie!
       cookies[:user_session] = {
-        :value => token,
+        :value => self.temporary_token,
         :secure => controller.request.ssl?,
         :httponly => true,
         :expires => self.expires_at
@@ -195,7 +197,8 @@ module Authie
     # Returns a session object or :none if no session is found.
     def self.get_session(controller)
       cookies = controller.send(:cookies)
-      if cookies[:user_session] && session = self.active.where(:token => cookies[:user_session]).first
+      if cookies[:user_session] && session = self.active.where(:token_hash => self.hash_token(cookies[:user_session])).first
+        session.temporary_token = cookies[:user_session]
         session.controller = controller
         session
       else
@@ -220,6 +223,11 @@ module Authie
     # Cleanup any old sessions.
     def self.cleanup
       self.active.where("expires_at IS NULL AND last_activity_at < ?", Authie.config.session_inactivity_timeout.ago).each(&:invalidate!)
+    end
+
+    # Return a hash of a given token
+    def self.hash_token(token)
+      Digest::SHA256.hexdigest(token)
     end
 
     private
