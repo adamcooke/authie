@@ -197,13 +197,19 @@ module Authie
     # Returns a session object or :none if no session is found.
     def self.get_session(controller)
       cookies = controller.send(:cookies)
-      if cookies[:user_session] && session = self.active.where(:token_hash => self.hash_token(cookies[:user_session])).first
+      if cookies[:user_session] && session = self.find_session_by_token(cookies[:user_session])
         session.temporary_token = cookies[:user_session]
         session.controller = controller
         session
       else
         :none
       end
+    end
+
+    # Find a session by a token (either from a hash or from the raw token)
+    def self.find_session_by_token(token)
+      return nil if token.blank?
+      self.active.where("token = ? OR token_hash = ?", token, self.hash_token(token)).first
     end
 
     # Create a new session and return the newly created session object.
