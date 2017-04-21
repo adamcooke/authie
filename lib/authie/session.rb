@@ -148,7 +148,7 @@ module Authie
 
     # Invalidate all sessions but this one for this user
     def invalidate_others!
-      self.class.where.not(:id => self.id).where(:user => self.user).each do |s|
+      self.class.where("id != ?", self.id).where(:user => self.user).each do |s|
         s.invalidate!
       end
     end
