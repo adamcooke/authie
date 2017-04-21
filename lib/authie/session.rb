@@ -11,11 +11,12 @@ module Authie
     self.table_name = "authie_sessions"
 
     # Relationships
-    belongs_to :user, {:polymorphic => true}.merge(Authie.config.user_relationship_options)
+    user_options = {:polymorphic => true}.merge(Authie.config.user_relationship_options)
+    user_options[:optional] = true if ActiveRecord::VERSION::MAJOR >= 5
+    belongs_to :user, user_options
+
     parent_options = {:class_name => "Authie::Session"}
-    if ActiveRecord::VERSION::MAJOR >= 5
-      parent_options[:optional] = true
-    end
+    parent_options[:optional] = true if ActiveRecord::VERSION::MAJOR >= 5
     belongs_to :parent, parent_options
 
     # Scopes
