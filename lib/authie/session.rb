@@ -242,7 +242,7 @@ module Authie
 
     # Convert all existing active sessions to store their tokens in the database
     def self.convert_tokens_to_hashes
-      active.where(:token_hash => nil).where.not(:token => nil).each do |s|
+      active.where(:token_hash => nil).where("token is not null").each do |s|
         hash = self.hash_token(s.token)
         self.where(:id => s.id).update_all(:token_hash => hash, :token => nil)
       end
