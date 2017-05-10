@@ -30,13 +30,10 @@ module Authie
     # Set the currently logged in user
     def current_user=(user)
       if user
-        unless logged_in?
-          @auth_session = Session.start(@controller, :user => user)
-        end
-        @current_user = user
+        @auth_session = Session.start(@controller, :user => user)
       else
-        auth_session.destroy if logged_in?
-        @current_user = nil
+        auth_session.invalidate! if logged_in?
+        @auth_session = nil
       end
     end
 
