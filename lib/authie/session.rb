@@ -44,7 +44,7 @@ module Authie
     end
 
     before_destroy do
-      cookies.delete(:user_session) if controller
+      cookies.delete(cookie_name(controller)) if controller
     end
 
     # This method should be called each time a user performs an
@@ -60,11 +60,12 @@ module Authie
 
     # Sets the cookie on the associated controller.
     def set_cookie!
-      cookies[:user_session] = {
+      cookies[cookie_name(controller)] = {
         :value => self.temporary_token,
         :secure => controller.request.ssl?,
         :httponly => true,
-        :expires => self.expires_at
+        :expires => self.expires_at,
+        :path => cookie_path(controller)
       }
     end
 
@@ -130,7 +131,7 @@ module Authie
       self.active = false
       self.save!
       if controller
-        cookies.delete(:user_session)
+        cookies.delete(cookie_name(controller))
       end
     end
 
@@ -197,9 +198,10 @@ module Authie
     # Find a session from the database for the given controller instance.
     # Returns a session object or :none if no session is found.
     def self.get_session(controller)
+      name = cookie_name(controller)
       cookies = controller.send(:cookies)
-      if cookies[:user_session] && session = self.find_session_by_token(cookies[:user_session])
-        session.temporary_token = cookies[:user_session]
+      if cookies[name] && session = self.find_session_by_token(cookies[name])
+        session.temporary_token = cookies[name]
         session.controller = controller
         session
       else
@@ -255,5 +257,24 @@ module Authie
       controller.send(:cookies)
     end
 
+    def cookie_name(controller)
+      self.class.cookie_name(controller)
+    end
+
+    def self.cookie_name(controller)
+      tokens = controller.class.superclass.name.split('::')
+
+      # Empty if no namespace (application)
+      name = tokens.length > 1 ? tokens.first.downcase : ''
+
+      [name, 'user', 'session'].join('_')
+    end
+
+    def cookie_path(controller)
+      tokens = controller.class.superclass.name.split('::')
+
+      # Namespace, usually /admin or / (root)
+      tokens.length > 1 ? "/#{tokens.first.downcase}" : '/'
+    end
   end
 end
