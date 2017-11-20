@@ -48,11 +48,14 @@ module Authie
       @auth_session ||= Session.get_session(self)
     end
 
-    def cookie_path
-      tokens = @controller.class.superclass.name.split('::')
+    def cookie_path=(cooie_path_name)
+      @cookie_path ||= cooie_path_name
+    end
 
-      # Namespace, usually /admin or / (root)
-      tokens.length > 1 ? "/#{tokens.first.downcase}" : '/'
+    def cookie_path
+      return '/' if @cookie_path.nil?
+
+      @cookie_path
     end
 
   end
