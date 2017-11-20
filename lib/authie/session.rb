@@ -197,8 +197,8 @@ module Authie
 
     # Find a session from the database for the given controller instance.
     # Returns a session object or :none if no session is found.
-    def self.get_session(controller)
-      name = cookie_name(controller)
+    def self.get_session(controller, namespace = nil)
+      name = cookie_name(controller, namespace)
       cookies = controller.send(:cookies)
       if cookies[name] && session = self.find_session_by_token(cookies[name])
         session.temporary_token = cookies[name]
@@ -261,11 +261,14 @@ module Authie
       self.class.cookie_name(controller)
     end
 
-    def self.cookie_name(controller)
-      tokens = controller.class.superclass.name.split('::')
+    def self.cookie_name(controller, name = nil)
+      # Name can be set manually when using RackController
+      if name.nil?
+        tokens = controller.class.superclass.name.split('::')
 
-      # Empty if no namespace (application)
-      name = tokens.length > 1 ? tokens.first.downcase : ''
+        # Empty if no namespace (application)
+        name = tokens.length > 1 ? tokens.first.downcase : ''
+      end
 
       [name, 'user', 'session'].join('_')
     end
