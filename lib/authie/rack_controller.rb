@@ -12,9 +12,10 @@ module Authie
 
     attr_reader :request
 
-    def initialize(env)
+    def initialize(env, cookie_path = '/')
       @env = env
       @request = ActionDispatch::Request.new(@env)
+      @cookie_path = cookie_path
       set_browser_id
     end
 
@@ -27,7 +28,7 @@ module Authie
       until cookies[:browser_id]
         proposed_browser_id = SecureRandom.uuid
         unless Session.where(:browser_id => proposed_browser_id).exists?
-          cookies[:browser_id] = {:value => proposed_browser_id, :expires => 20.years.from_now, :path => cookie_path}
+          cookies[:browser_id] = {:value => proposed_browser_id, :expires => 20.years.from_now, :path => @cookie_path}
         end
       end
     end
@@ -47,16 +48,5 @@ module Authie
     def auth_session
       @auth_session ||= Session.get_session(self)
     end
-
-    def cookie_path=(cooie_path_name)
-      @cookie_path ||= cooie_path_name
-    end
-
-    def cookie_path
-      return '/' if @cookie_path.nil?
-
-      @cookie_path
-    end
-
   end
 end
