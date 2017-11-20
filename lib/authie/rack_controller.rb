@@ -12,10 +12,11 @@ module Authie
 
     attr_reader :request
 
-    def initialize(env, cookie_path = '/')
+    def initialize(env, cookie_path = '/', cookie_namespace = '')
       @env = env
       @request = ActionDispatch::Request.new(@env)
       @cookie_path = cookie_path
+      @cookie_namespace = cookie_namespace
       set_browser_id
     end
 
@@ -46,7 +47,7 @@ module Authie
     end
 
     def auth_session
-      @auth_session ||= Session.get_session(self)
+      @auth_session ||= Session.get_session(self, @cookie_namespace)
     end
   end
 end
