@@ -113,6 +113,18 @@ class SessionTest < Minitest::Test
     end
   end
 
+  def test_using_session_from_another_host_fails
+    # Make a session
+    controller = FakeController.new(:host => "host1.example.com")
+    assert session = Authie::Session.start(controller)
+    # Check the session from another controller
+    controller = FakeController.new(:host => "host2.example.com", :browser_id => session.browser_id, :user_session => session.temporary_token)
+    assert session = Authie::Session.get_session(controller)
+    assert_raises Authie::Session::HostMismatch do
+      session.check_security!
+    end
+  end
+
   def test_sessions_are_expired
     controller = FakeController.new
     # Make a session

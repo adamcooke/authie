@@ -1,5 +1,5 @@
 source "https://rubygems.org"
-gem 'activerecord', '>= 4.0', "< 5.0"
+gem 'activerecord', '>= 5.1.5'
 
 group :development do
   gem 'rake'

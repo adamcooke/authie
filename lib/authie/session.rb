@@ -6,6 +6,7 @@ module Authie
     class ExpiredSession < Error; end
     class BrowserMismatch < Error; end
     class NoParentSessionForRevert < Error; end
+    class HostMismatch < Error; end
 
     # Set table name
     self.table_name = "authie_sessions"
@@ -89,6 +90,11 @@ module Authie
         if self.inactive?
           invalidate!
           raise InactiveSession, "Non-persistent session has expired"
+        end
+
+        if self.host && self.host != controller.request.host
+          invalidate!
+          raise HostMismatch, "Session was created on #{self.host} but accessed using #{controller.request.host}"
         end
       end
     end
@@ -223,6 +229,7 @@ module Authie
       session.browser_id = cookies[:browser_id]
       session.login_at = Time.now
       session.login_ip = controller.request.ip
+      session.host = controller.request.host
       session.save!
       session
     end

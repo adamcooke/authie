@@ -48,6 +48,10 @@ class FakeRequest
   def path
     "/demo"
   end
+
+  def host
+    @options[:host] || "test.example.com"
+  end
 end
 
 class FakeCookieJar
@@ -56,6 +60,10 @@ class FakeCookieJar
     @raw = {}
     if @options[:browser_id]
       @raw[:browser_id] = @options[:browser_id]
+    end
+
+    if @options[:user_session]
+      @raw[:user_session] = @options[:user_session]
     end
   end
 
