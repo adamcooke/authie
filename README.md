@@ -112,6 +112,8 @@ to catch within your application. The errors which will be raised are:
 * `Authie::Session::ExpiredSession` - is raised when a session expires.
 * `Authie::Session::BrowserMismatch` - is raised when the browser ID provided does
   not match the browser ID associated with the session token provided.
+* `Authie::Session::HostMismatch` - is raised when the session is used on a hostname
+  that does not match that which created the session
 
 The easiest way to rescue these to use a `rescue_from`. For example:
 
@@ -121,6 +123,7 @@ class ApplicationController < ActionController::Base
   rescue_from Authie::Session::InactiveSession, :with => :auth_session_error
   rescue_from Authie::Session::ExpiredSession, :with => :auth_session_error
   rescue_from Authie::Session::BrowserMismatch, :with => :auth_session_error
+  rescue_from Authie::Session::HostMismatch, :with => :auth_session_error
 
   private
 
