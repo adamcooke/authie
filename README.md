@@ -169,7 +169,7 @@ end
 ```
 
 By default, persistent sessions will last for 2 months before requring the user
-logs in again. You can increase this if needed:
+logs in again. You can increase (or decrease) this if needed:
 
 ```ruby
 Authie.config.persistent_session_length = 12.months
@@ -177,17 +177,20 @@ Authie.config.persistent_session_length = 12.months
 
 ### Accessing all user sessions
 
-If you want to provide users with a list of their sessions, you can access all active sessions for a user. The best way to do this will be to add a `has_many` association to your User model.
+If you want to provide users with a list of their sessions, you can access all
+active sessions for a user. The best way to do this will be to add a `has_many`
+association to your User model.
 
 ```ruby
 class User < ActiveRecord::Base
-  has_many :sessions, :class_name => 'Authie::Session', :foreign_key => 'user_id', :dependent => :destroy
+  has_many :sessions, :class_name => 'Authie::Session', :as => :user, :dependent => :destroy
 end
 ```
 
 ### Storing additional data in the user session
 
-If you need to store additional information in your database-backed database session, then you can use the following methods to achieve this:
+If you need to store additional information in your database-backed database
+session, then you can use the following methods to achieve this:
 
 ```ruby
 auth_session.set :two_factor_seen_at, Time.now
@@ -218,6 +221,8 @@ implement in a secure admin controller allowing you to impersonate any given use
 
 ```ruby
 class AdminController < ApplicationController
+
+  before_action :ensure_admin_user
 
   def switch_user
     user = User.find(params[:other_user_id])
