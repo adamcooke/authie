@@ -1,12 +1,15 @@
 module Authie
   class Session < ActiveRecord::Base
 
-    # Define some errors which may be used
-    class InactiveSession < Error; end
-    class ExpiredSession < Error; end
-    class BrowserMismatch < Error; end
+    # Errors which will be raised when there's an issue with a session's
+    # validity in the request.
+    class ValidityError < Error; end
+    class InactiveSession < ValidityError; end
+    class ExpiredSession < ValidityError; end
+    class BrowserMismatch < ValidityError; end
+    class HostMismatch < ValidityError; end
+
     class NoParentSessionForRevert < Error; end
-    class HostMismatch < Error; end
 
     # Set table name
     self.table_name = "authie_sessions"
