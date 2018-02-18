@@ -34,7 +34,7 @@ The design goals behind Authie are:
 As usual, just pop this in your Gemfile:
 
 ```ruby
-gem 'authie', '~> 2.0'
+gem 'authie', '~> 3.1'
 ```
 
 You will then need add the database tables Authie needs to your database. You
@@ -44,11 +44,6 @@ should copy Authie's migrations and then migrate.
 rake authie:install:migrations
 rake db:migrate
 ```
-
-**Note:** the way database migrations are handled has been changed between 1.x
-and 2.x. In 1.x, migrations were kept in the gem however in 2.x they are copied
-to your application's `db/migrate` folder. These two techniques are not compatible
-with each other. There is no clear upgrade path from 1.x to 2.x at present.
 
 ## Usage
 
