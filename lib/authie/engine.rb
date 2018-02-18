@@ -1,6 +1,5 @@
 module Authie
   class Engine < ::Rails::Engine
-
     engine_name 'authie'
 
     initializer 'authie.initialize' do |app|
@@ -8,12 +7,10 @@ module Authie
         require 'authie/session'
       end
 
-      ActiveSupport.on_load :action_controller do
-        require 'authie/controller_extension'
-        include Authie::ControllerExtension
-      end
-
+      # ActiveSupport.on_load :action_controller do
+      #   require 'authie/controller_extension'
+      #   include Authie::ControllerExtension
+      # end
     end
-
   end
 end
