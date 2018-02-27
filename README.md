@@ -1,5 +1,7 @@
 # Authie
 
+[![Build Status](https://travis-ci.org/adamcooke/authie.svg?branch=master)](https://travis-ci.org/adamcooke/authie) [![Gem Version](https://badge.fury.io/rb/authie.svg)](https://badge.fury.io/rb/authie)
+
 This is a Rails library which provides applications with a database-backed user
 sessions. This ensures that user sessions can be invalidated from the server and
 users activity can be easily tracked.
