@@ -7,10 +7,15 @@ module Authie
 
     # Set a random browser ID for this browser.
     def set_browser_id
-      until cookies[:browser_id]
+      until cookies[Authie.config.browser_id_cookie_name]
         proposed_browser_id = SecureRandom.uuid
         unless Session.where(:browser_id => proposed_browser_id).exists?
-          cookies[:browser_id] = {:value => proposed_browser_id, :expires => 20.years.from_now}
+          cookies[Authie.config.browser_id_cookie_name] = {
+            :value => proposed_browser_id,
+            :expires => 5.years.from_now,
+            :httponly => true,
+            :secure => @controller.request.ssl?
+          }
         end
       end
     end

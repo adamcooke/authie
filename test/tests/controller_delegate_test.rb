@@ -26,6 +26,8 @@ class ControllerDelegateTest < Minitest::Test
     @delegate.set_browser_id
     # Test the browser ID looks like a UUID
     assert @controller.cookies[:browser_id] =~ /\A[a-f0-9\-]{36}\z/
+    assert_equal true, @controller.cookies.raw[:browser_id][:httponly]
+    assert_equal true, @controller.cookies.raw[:browser_id][:secure]
   end
 
   def test_touching_auth_sessions

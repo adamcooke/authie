@@ -20,6 +20,11 @@ module Authie
       @user_relationship_options ||= {}
     end
 
+    def browser_id_cookie_name
+      @browser_id_cookie_name || :browser_id
+    end
+    attr_writer :browser_id_cookie_name
+
   end
 
   def self.config
