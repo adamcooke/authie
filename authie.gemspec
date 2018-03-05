@@ -11,4 +11,6 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.authors       = ["Adam Cooke"]
   s.email         = ["me@adamcooke.io"]
+  s.cert_chain    = ['certs/adamcooke.pem']
+  s.signing_key   = File.expand_path("~/.ssh/gem-private_key.pem") if $0 =~ /gem\z/
 end
