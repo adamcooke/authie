@@ -30,4 +30,9 @@ module Authie
   def self.config
     @config ||= Config.new
   end
+
+  def self.configure(&block)
+    block.call(config)
+    config
+  end
 end
