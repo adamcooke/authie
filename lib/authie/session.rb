@@ -241,7 +241,7 @@ module Authie
     # Any other sessions for the browser will be invalidated.
     def self.start(controller, params = {})
       cookies = controller.send(:cookies)
-      self.where(:browser_id => cookies[:browser_id]).each(&:invalidate!)
+      self.active.where(:browser_id => cookies[:browser_id]).each(&:invalidate!)
       session = self.new(params)
       session.controller = controller
       session.browser_id = cookies[:browser_id]
