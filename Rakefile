@@ -5,4 +5,5 @@ task :default do
   require 'tests/session_test'
   require 'tests/controller_delegate_test'
   require 'tests/controller_extension_test'
+  require 'tests/events_test'
 end

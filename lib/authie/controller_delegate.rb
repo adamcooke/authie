@@ -16,6 +16,8 @@ module Authie
             :httponly => true,
             :secure => @controller.request.ssl?
           }
+          # Dispatch an event when the browser ID is set.
+          Authie.config.events.dispatch(:set_browser_id, proposed_browser_id)
         end
       end
     end

@@ -60,6 +60,8 @@ module Authie
       self.last_activity_path = controller.request.path
       self.requests += 1
       self.save!
+      Authie.config.events.dispatch(:session_touched, self)
+      true
     end
 
     # Sets the cookie on the associated controller.
@@ -70,6 +72,8 @@ module Authie
         :httponly => true,
         :expires => self.expires_at
       }
+      Authie.config.events.dispatch(:session_cookie_updated, self)
+      true
     end
 
     # Check the security of the session to ensure it can be used.
@@ -77,26 +81,31 @@ module Authie
       if controller
         if cookies[:browser_id] != self.browser_id
           invalidate!
+          Authie.config.events.dispatch(:browser_id_mismatch_error, self)
           raise BrowserMismatch, "Browser ID mismatch"
         end
 
         unless self.active?
           invalidate!
+          Authie.config.events.dispatch(:invalid_session_error, self)
           raise InactiveSession, "Session is no longer active"
         end
 
         if self.expired?
           invalidate!
+          Authie.config.events.dispatch(:expired_session_error, self)
           raise ExpiredSession, "Persistent session has expired"
         end
 
         if self.inactive?
           invalidate!
+          Authie.config.events.dispatch(:inactive_session_error, self)
           raise InactiveSession, "Non-persistent session has expired"
         end
 
         if self.host && self.host != controller.request.host
           invalidate!
+          Authie.config.events.dispatch(:host_mismatch_error, self)
           raise HostMismatch, "Session was created on #{self.host} but accessed using #{controller.request.host}"
         end
       end
@@ -141,6 +150,8 @@ module Authie
       if controller
         cookies.delete(:user_session)
       end
+      Authie.config.events.dispatch(:session_invalidated, self)
+      true
     end
 
     # Set some additional data in this session
@@ -166,6 +177,8 @@ module Authie
     def see_password!
       self.password_seen_at = Time.now
       self.save!
+      Authie.config.events.dispatch(:seen_password, self)
+      true
     end
 
     # Have we seen the user's password recently in this sesion?
@@ -183,6 +196,8 @@ module Authie
       self.two_factored_at = Time.now
       self.two_factored_ip = controller.request.ip
       self.save!
+      Authie.config.events.dispatch(:marked_as_two_factored, self)
+      true
     end
 
     # Create a new session for impersonating for the given user
@@ -234,15 +249,19 @@ module Authie
       session.login_ip = controller.request.ip
       session.host = controller.request.host
       session.save!
+      Authie.config.events.dispatch(:start_session, session)
       session
     end
 
     # Cleanup any old sessions.
     def self.cleanup
+      Authie.config.events.dispatch(:before_cleanup)
       # Invalidate transient sessions that haven't been used
       self.active.where("expires_at IS NULL AND last_activity_at < ?", Authie.config.session_inactivity_timeout.ago).each(&:invalidate!)
       # Invalidate persistent sessions that have expired
       self.active.where("expires_at IS NOT NULL AND expires_at < ?", Time.now).each(&:invalidate!)
+      Authie.config.events.dispatch(:after_cleanup)
+      true
     end
 
     # Return a hash of a given token

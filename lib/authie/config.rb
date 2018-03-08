@@ -1,5 +1,11 @@
+require 'authie/event_manager'
+
 module Authie
   class Config
+
+    def initialize
+      @callbacks = {}
+    end
 
     def session_inactivity_timeout
       @session_inactivity_timeout || 12.hours
@@ -25,6 +31,9 @@ module Authie
     end
     attr_writer :browser_id_cookie_name
 
+    def events
+      @event_manager ||= EventManager.new
+    end
   end
 
   def self.config
@@ -35,4 +44,5 @@ module Authie
     block.call(config)
     config
   end
+
 end
