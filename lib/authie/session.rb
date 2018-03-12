@@ -218,6 +218,16 @@ module Authie
       end
     end
 
+    # Is this the first session for this session's browser?
+    def first_session_for_browser?
+      self.class.where("id < ?", self.id).where(:user => self.user, :browser_id => self.browser_id).empty?
+    end
+
+    # Is this the first session for the IP?
+    def first_session_for_ip?
+      self.class.where("id < ?", self.id).where(:user => self.user, :login_ip => self.login_ip).empty?
+    end
+
     # Find a session from the database for the given controller instance.
     # Returns a session object or :none if no session is found.
     def self.get_session(controller)

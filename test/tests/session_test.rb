@@ -305,4 +305,22 @@ class SessionTest < Minitest::Test
     assert_equal user1, original_session.user
   end
 
+  def test_first_session_for_browser
+    user = User.create(:username => 'tester1')
+    controller = FakeController.new(:browser_id => 'browser1')
+    assert session = Authie::Session.start(controller, :user => user)
+    assert_equal session.first_session_for_browser?, true
+    assert session = Authie::Session.start(controller, :user => user)
+    assert_equal session.first_session_for_browser?, false
+  end
+
+  def test_first_session_for_ip
+    user = User.create(:username => 'tester1')
+    controller = FakeController.new(:browser_id => 'browser1')
+    assert session = Authie::Session.start(controller, :user => user)
+    assert_equal session.first_session_for_ip?, true
+    assert session = Authie::Session.start(controller, :user => user)
+    assert_equal session.first_session_for_ip?, false
+  end
+
 end
