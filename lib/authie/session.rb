@@ -191,7 +191,7 @@ module Authie
       !!(two_factored_at || self.parent_id)
     end
 
-    # Mark this request as two factor authoritsed
+    # Mark this request as two factor authorized
     def mark_as_two_factored!
       self.two_factored_at = Time.now
       self.two_factored_ip = controller.request.ip
