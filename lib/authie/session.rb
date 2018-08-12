@@ -232,7 +232,7 @@ module Authie
     # Returns a session object or :none if no session is found.
     def self.get_session(controller)
       cookies = controller.send(:cookies)
-      if cookies[:user_session] && session = self.find_session_by_token(cookies[:user_session])
+      if session = self.find_session_by_token(cookies[:user_session])
         session.temporary_token = cookies[:user_session]
         session.controller = controller
         session
