@@ -36,6 +36,10 @@ module Authie
       if self.user_agent.is_a?(String)
         self.user_agent = self.user_agent[0,255]
       end
+
+      if self.last_activity_path.is_a?(String)
+        self.last_activity_path = self.last_activity_path[0,255]
+      end
     end
 
     before_create do
