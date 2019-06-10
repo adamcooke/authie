@@ -1,3 +1,6 @@
+require 'securerandom'
+require 'authie/session'
+
 module Authie
   class ControllerDelegate
 
@@ -9,7 +12,7 @@ module Authie
     def set_browser_id
       until cookies[Authie.config.browser_id_cookie_name]
         proposed_browser_id = SecureRandom.uuid
-        unless Session.where(:browser_id => proposed_browser_id).exists?
+        unless Authie::Session.where(:browser_id => proposed_browser_id).exists?
           cookies[Authie.config.browser_id_cookie_name] = {
             :value => proposed_browser_id,
             :expires => 5.years.from_now,
@@ -43,7 +46,7 @@ module Authie
     # Create a new session for the given user
     def create_auth_session(user)
       if user
-        @auth_session = Session.start(@controller, :user => user)
+        @auth_session = Authie::Session.start(@controller, :user => user)
       else
         auth_session.invalidate! if logged_in?
         @auth_session = :none
@@ -68,7 +71,7 @@ module Authie
 
     # Return the currently logged in user session
     def auth_session
-      @auth_session ||= Session.get_session(@controller)
+      @auth_session ||= Authie::Session.get_session(@controller)
       @auth_session == :none ? nil : @auth_session
     end
 
