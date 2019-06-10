@@ -64,7 +64,7 @@ class AuthenticationController < ApplicationController
   def login
     if request.post?
       if user = User.authenticate(params[:username], params[:password])
-        self.current_user = user
+        create_auth_session(user)
         redirect_to root_path
       else
         flash.now[:alert] = "Username/password was invalid"
@@ -255,7 +255,7 @@ password in a session and whether you need to prompt them before continuing.
 # that we have just seen their password.
 def login
   if user = User.authenticate(params[:username], params[:password])
-    self.current_user = user
+    create_auth_session(user)
     auth_session.see_password!
     redirect_to root_path
   end
