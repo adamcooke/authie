@@ -36,6 +36,12 @@ module Authie
 
     # Set the currently logged in user
     def current_user=(user)
+      create_auth_session(user)
+      user
+    end
+
+    # Create a new session for the given user
+    def create_auth_session(user)
       if user
         @auth_session = Session.start(@controller, :user => user)
       else

@@ -12,6 +12,18 @@ class ControllerDelegateTest < Minitest::Test
     assert_equal false, @delegate.logged_in?
     # Create a user and log them in
     user = User.create(:username => 'tester')
+    @delegate.create_auth_session(user)
+    # Test that we're now logged in
+    assert_equal true, @delegate.logged_in?
+    assert_equal user, @delegate.current_user
+    assert_equal Authie::Session, @delegate.auth_session.class
+  end
+
+  def test_users_can_be_logged_in_by_setting_current_user
+    # Test nobody is logged in by default
+    assert_equal false, @delegate.logged_in?
+    # Create a user and log them in
+    user = User.create(:username => 'tester')
     @delegate.current_user = user
     # Test that we're now logged in
     assert_equal true, @delegate.logged_in?
