@@ -46,7 +46,18 @@ module Authie
         @auth_session = Session.start(@controller, :user => user)
       else
         auth_session.invalidate! if logged_in?
-        @auth_session = nil
+        @auth_session = :none
+      end
+    end
+
+    # Invalidate an existing auth session
+    def invalidate_auth_session
+      if logged_in?
+        auth_session.invalidate!
+        @auth_session = :none
+        true
+      else
+        false
       end
     end
 
@@ -58,6 +69,7 @@ module Authie
     # Return the currently logged in user session
     def auth_session
       @auth_session ||= Session.get_session(@controller)
+      @auth_session == :none ? nil : @auth_session
     end
 
     private

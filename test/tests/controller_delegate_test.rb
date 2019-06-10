@@ -31,6 +31,18 @@ class ControllerDelegateTest < Minitest::Test
     assert_equal Authie::Session, @delegate.auth_session.class
   end
 
+  def test_auth_sessions_can_be_invalidated
+    user = User.create(:username => 'tester')
+    @delegate.create_auth_session(user)
+    # Test that we're now logged in
+    assert_equal true, @delegate.logged_in?
+    # Test we can invalidate session
+    assert_equal true, @delegate.invalidate_auth_session
+    assert_equal nil, @delegate.auth_session
+    assert_equal false, @delegate.logged_in?
+    assert_equal nil, @delegate.current_user
+  end
+
   def test_browser_id_can_be_set
     # Test that there's no browser ID to begin
     assert_equal nil, @controller.cookies[:browser_id]

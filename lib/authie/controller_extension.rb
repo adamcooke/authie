@@ -35,6 +35,10 @@ module Authie
       auth_session_delegate.create_auth_session(user)
     end
 
+    def invalidate_auth_session
+      auth_session_delegate.invalidate_auth_session
+    end
+
     def logged_in?
       auth_session_delegate.logged_in?
     end
