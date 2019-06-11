@@ -15,10 +15,6 @@ module Authie
     self.table_name = "authie_sessions"
 
     # Relationships
-    user_options = {:polymorphic => true}.merge(Authie.config.user_relationship_options)
-    user_options[:optional] = true if ActiveRecord::VERSION::MAJOR >= 5
-    belongs_to :user, user_options
-
     parent_options = {:class_name => "Authie::Session"}
     parent_options[:optional] = true if ActiveRecord::VERSION::MAJOR >= 5
     belongs_to :parent, parent_options
@@ -53,6 +49,14 @@ module Authie
 
     before_destroy do
       cookies.delete(:user_session) if controller
+    end
+
+    # Return the user that
+    def user
+      if self.user_id && self.user_type
+        @user ||= self.user_type.constantize.find_by(:id => self.user_id) || :none
+        @user == :none ? nil : @user
+      end
     end
 
     # This method should be called each time a user performs an
@@ -256,7 +260,15 @@ module Authie
     def self.start(controller, params = {})
       cookies = controller.send(:cookies)
       self.active.where(:browser_id => cookies[:browser_id]).each(&:invalidate!)
+      user_object = params.delete(:user)
+
+      if user_object.nil?
+        raise ActiveRecord::RecordInvalid, ':user must be provided when creating a session'
+      end
+
       session = self.new(params)
+      session.user_type = user_object.class.to_s
+      session.user_id = user_object.id
       session.controller = controller
       session.browser_id = cookies[:browser_id]
       session.login_at = Time.now
