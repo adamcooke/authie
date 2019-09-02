@@ -1,3 +1,5 @@
+require 'secure_random_string'
+
 module Authie
   class Session < ActiveRecord::Base
 
@@ -40,7 +42,7 @@ module Authie
     end
 
     before_create do
-      self.temporary_token = SecureRandom.base64(32)
+      self.temporary_token = SecureRandomString.new(44)
       self.token_hash = self.class.hash_token(self.temporary_token)
       if controller
         self.user_agent = controller.request.user_agent
