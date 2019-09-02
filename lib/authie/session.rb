@@ -24,7 +24,7 @@ module Authie
     # Scopes
     scope :active, -> { where(:active => true) }
     scope :asc, -> { order(:last_activity_at => :desc) }
-    scope :for_user, -> (user) { where(:user_type => user.class.to_s, :user_id => user.id) }
+    scope :for_user, -> (user) { where(:user_type => user.class.name, :user_id => user.id) }
 
     # Attributes
     serialize :data, Hash
@@ -59,6 +59,17 @@ module Authie
       if self.user_id && self.user_type
         @user ||= self.user_type.constantize.find_by(:id => self.user_id) || :none
         @user == :none ? nil : @user
+      end
+    end
+
+    # Set the user
+    def user=(user)
+      if user
+        self.user_type = user.class.name
+        self.user_id = user.id
+      else
+        self.user_type = nil
+        self.user_id = nil
       end
     end
 
@@ -266,10 +277,7 @@ module Authie
       user_object = params.delete(:user)
 
       session = self.new(params)
-      if user_object
-        session.user_type = user_object.class.to_s
-        session.user_id = user_object.id
-      end
+      session.user = user_object
       session.controller = controller
       session.browser_id = cookies[:browser_id]
       session.login_at = Time.now
