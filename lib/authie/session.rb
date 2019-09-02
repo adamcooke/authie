@@ -22,6 +22,7 @@ module Authie
     # Scopes
     scope :active, -> { where(:active => true) }
     scope :asc, -> { order(:last_activity_at => :desc) }
+    scope :for_user, -> (user) { where(:user_type => user.class.to_s, :user_id => user.id) }
 
     # Attributes
     serialize :data, Hash
@@ -176,7 +177,7 @@ module Authie
 
     # Invalidate all sessions but this one for this user
     def invalidate_others!
-      self.class.where("id != ?", self.id).where(:user => self.user).each do |s|
+      self.class.where("id != ?", self.id).for_user(self.user).each do |s|
         s.invalidate!
       end
     end
@@ -228,12 +229,12 @@ module Authie
 
     # Is this the first session for this session's browser?
     def first_session_for_browser?
-      self.class.where("id < ?", self.id).where(:user => self.user, :browser_id => self.browser_id).empty?
+      self.class.where("id < ?", self.id).for_user(self.user).where(:browser_id => self.browser_id).empty?
     end
 
     # Is this the first session for the IP?
     def first_session_for_ip?
-      self.class.where("id < ?", self.id).where(:user => self.user, :login_ip => self.login_ip).empty?
+      self.class.where("id < ?", self.id).for_user(self.user).where(:login_ip => self.login_ip).empty?
     end
 
     # Find a session from the database for the given controller instance.
@@ -262,13 +263,11 @@ module Authie
       self.active.where(:browser_id => cookies[:browser_id]).each(&:invalidate!)
       user_object = params.delete(:user)
 
-      if user_object.nil?
-        raise ActiveRecord::RecordInvalid, ':user must be provided when creating a session'
-      end
-
       session = self.new(params)
-      session.user_type = user_object.class.to_s
-      session.user_id = user_object.id
+      if user_object
+        session.user_type = user_object.class.to_s
+        session.user_id = user_object.id
+      end
       session.controller = controller
       session.browser_id = cookies[:browser_id]
       session.login_at = Time.now
