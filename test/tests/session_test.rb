@@ -299,6 +299,7 @@ class SessionTest < Minitest::Test
     # Test that the controller's session cookie is the new session
     assert_equal new_session.token_hash, Authie::Session.hash_token(controller.cookies[:user_session])
     # Test reverting to the parent controller
+    new_session.reload
     assert original_session = new_session.revert_to_parent!
     assert_equal original_session, session
     assert_equal session.token_hash, Authie::Session.hash_token(controller.cookies[:user_session])
