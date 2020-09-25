@@ -87,14 +87,26 @@ module Authie
     end
 
     # Sets the cookie on the associated controller.
-    def set_cookie!
+    def set_cookie!(value = self.temporary_token)
       cookies[:user_session] = {
-        :value => self.temporary_token,
+        :value => value,
         :secure => controller.request.ssl?,
         :httponly => true,
         :expires => self.expires_at
       }
       Authie.config.events.dispatch(:session_cookie_updated, self)
+      true
+    end
+
+    # Sets the cookie for the parent session on the associated controller.
+    def set_parent_cookie!
+      cookies[:parent_user_session] = {
+        :value => cookies[:user_session],
+        :secure => controller.request.ssl?,
+        :httponly => true,
+        :expires => self.expires_at
+      }
+      Authie.config.events.dispatch(:parent_session_cookie_updated, self)
       true
     end
 
@@ -224,16 +236,18 @@ module Authie
 
     # Create a new session for impersonating for the given user
     def impersonate!(user)
+      set_parent_cookie!
       self.class.start(controller, :user => user, :parent => self)
     end
 
     # Revert back to the parent session
     def revert_to_parent!
-      if self.parent
+      if self.parent && cookies[:parent_user_session]
         self.invalidate!
         self.parent.activate!
         self.parent.controller = self.controller
-        self.parent.set_cookie!
+        self.parent.set_cookie!(cookies[:parent_user_session])
+        cookies.delete(:parent_user_session)
         self.parent
       else
         raise NoParentSessionForRevert, "Session does not have a parent therefore cannot be reverted."
