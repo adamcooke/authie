@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    authie (3.3.2)
+    authie (3.4.0)
       secure_random_string
 
 GEM
