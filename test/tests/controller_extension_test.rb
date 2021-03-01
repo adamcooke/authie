@@ -1,7 +1,8 @@
+# frozen_string_literal: true
+
 require 'authie/controller_extension'
 
 class ExtendedController < FakeController
-
   def self.before_actions
     @before_actions ||= []
   end
@@ -19,11 +20,9 @@ class ExtendedController < FakeController
   end
 
   include Authie::ControllerExtension
-
 end
 
 class ControllerExtensionTest < Minitest::Test
-
   def setup
     @controller = ExtendedController.new
   end
@@ -42,5 +41,4 @@ class ControllerExtensionTest < Minitest::Test
     assert @controller.class.helper_methods.include?(:current_user)
     assert @controller.class.helper_methods.include?(:auth_session)
   end
-
 end

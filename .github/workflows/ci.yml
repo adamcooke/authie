@@ -1,0 +1,76 @@
+name: CI
+on: push
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
+
+      - name: Install dependencies
+        run: bundle install
+
+      - name: Run linter
+        run: bundle exec rake lint
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby_version:
+          - 2.5
+          - 2.6
+          - 2.7
+          - 3.0
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby_version }}
+
+      - name: Install dependencies
+        run: bundle install
+
+      - name: Run tests
+        run: bundle exec rake test
+
+  # release:
+  #   runs-on: ubuntu-latest
+  #   needs: [lint, test]
+  #   if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
+  #   steps:
+  #     - uses: actions/checkout@master
+
+  #     - name: Set up Ruby
+  #       uses: actions/setup-ruby@v1
+  #       with:
+  #         ruby-version: 2.7
+
+  #     - name: Export version from tag name
+  #       run: echo ${GITHUB_REF/refs\/tags\//} > VERSION
+
+  #     - name: Build Gem
+  #       run: gem build *.gemspec
+
+  #     - name: Setup credentials
+  #       run: |
+  #         mkdir -p $HOME/.gem
+  #         touch $HOME/.gem/credentials
+  #         chmod 0600 $HOME/.gem/credentials
+  #         printf -- "---\n:rubygems_api_key: ${RUBYGEMS_API_KEY}\n" > $HOME/.gem/credentials
+  #         printf -- ":github: Bearer ${GITHUB_API_KEY}\n" >> $HOME/.gem/credentials
+  #       env:
+  #         RUBYGEMS_API_KEY: ${{secrets.KRYSTAL_RUBYGEMS_API_KEY}}
+  #         GITHUB_API_KEY: ${{secrets.GITHUB_TOKEN}}
+
+  #     # - name: Publish to RubyGems
+  #     #   run: |
+  #     #     gem push *.gem
+
+  #     # - name: Publish to GPR
+  #     #   run: |
+  #     #     gem push --key github --host https://rubygems.pkg.github.com/krystal *.gem

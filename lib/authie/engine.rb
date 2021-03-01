@@ -1,9 +1,10 @@
+# frozen_string_literal: true
+
 module Authie
   class Engine < ::Rails::Engine
-
     engine_name 'authie'
 
-    initializer 'authie.initialize' do |app|
+    initializer 'authie.initialize' do |_app|
       ActiveSupport.on_load :active_record do
         require 'authie/session'
       end
@@ -13,6 +14,5 @@ module Authie
         include Authie::ControllerExtension
       end
     end
-
   end
 end

@@ -1,7 +1,8 @@
+# frozen_string_literal: true
+
 require 'authie/session'
 
 class SessionTest < Minitest::Test
-
   def test_session_can_be_started
     controller = FakeController.new
     # Test session can be started
@@ -30,11 +31,11 @@ class SessionTest < Minitest::Test
   end
 
   def test_using_a_session_from_another_browser_fails
-    controller = FakeController.new(:browser_id => 'old')
+    controller = FakeController.new(browser_id: 'old')
     # Make a new session
     assert session = Authie::Session.start(controller)
     # Make a new controller/browser session with a new browser ID
-    other_controller = FakeController.new(:browser_id => 'new')
+    other_controller = FakeController.new(browser_id: 'new')
     # Load the session ID into the new controller to simulate someone
     # stealing the cookie into a new browser
     other_controller.cookies[:user_session] = session.temporary_token
@@ -43,7 +44,7 @@ class SessionTest < Minitest::Test
     assert_raises Authie::Session::BrowserMismatch do
       new_session.check_security!
     end
-    # Test the new session has been invalidated
+    # Test the new session has been invalidated
     assert_equal false, new_session.active?
   end
 
@@ -53,7 +54,7 @@ class SessionTest < Minitest::Test
     assert session = Authie::Session.start(controller)
     # Test newly created sessions are not persisted
     assert_equal false, session.persistent?
-    assert_equal nil, controller.cookies.expiry_for(:user_session)
+    assert_nil controller.cookies.expiry_for(:user_session)
     assert_equal session.token_hash, Authie::Session.hash_token(controller.cookies[:user_session])
     # Persist
     session.persist!
@@ -94,7 +95,7 @@ class SessionTest < Minitest::Test
     # Mark as persistent
     assert session.persist!
     # Expire the token
-    assert session.update(:expires_at => 10.minutes.ago)
+    assert session.update(expires_at: 10.minutes.ago)
     # Test that the security check raises an appropriate error
     assert_raises Authie::Session::ExpiredSession do
       session.check_security!
@@ -106,7 +107,7 @@ class SessionTest < Minitest::Test
     # Make a session
     assert session = Authie::Session.start(controller)
     # Don't use the session for an hour
-    assert session.update(:last_activity_at => (Authie.config.session_inactivity_timeout + 1.minute).ago)
+    assert session.update(last_activity_at: (Authie.config.session_inactivity_timeout + 1.minute).ago)
     # Test that the security check raises an appropriate error
     assert_raises Authie::Session::InactiveSession do
       session.check_security!
@@ -115,10 +116,11 @@ class SessionTest < Minitest::Test
 
   def test_using_session_from_another_host_fails
     # Make a session
-    controller = FakeController.new(:host => "host1.example.com")
+    controller = FakeController.new(host: 'host1.example.com')
     assert session = Authie::Session.start(controller)
     # Check the session from another controller
-    controller = FakeController.new(:host => "host2.example.com", :browser_id => session.browser_id, :user_session => session.temporary_token)
+    controller = FakeController.new(host: 'host2.example.com', browser_id: session.browser_id,
+                                    user_session: session.temporary_token)
     assert session = Authie::Session.get_session(controller)
     assert_raises Authie::Session::HostMismatch do
       session.check_security!
@@ -130,7 +132,7 @@ class SessionTest < Minitest::Test
     # Make a session
     assert session = Authie::Session.start(controller)
     # Don't use the session for an hour
-    assert session.update(:expires_at => 10.minutes.ago)
+    assert session.update(expires_at: 10.minutes.ago)
     assert_equal true, session.expired?
   end
 
@@ -139,7 +141,7 @@ class SessionTest < Minitest::Test
     # Make a session
     assert session = Authie::Session.start(controller)
     # Don't use the session for an hour
-    assert session.update(:last_activity_at => (Authie.config.session_inactivity_timeout + 1.minute).ago)
+    assert session.update(last_activity_at: (Authie.config.session_inactivity_timeout + 1.minute).ago)
     assert_equal true, session.inactive?
   end
 
@@ -151,7 +153,7 @@ class SessionTest < Minitest::Test
     assert_equal true, controller.cookies.raw[:user_session][:httponly]
     assert_equal true, controller.cookies.raw[:user_session][:secure]
     assert_equal session.token_hash, Authie::Session.hash_token(controller.cookies.raw[:user_session][:value])
-    assert_equal session.expires_at, controller.cookies.raw[:user_session][:expires]
+    assert_nil controller.cookies.raw[:user_session][:expires]
   end
 
   def test_touching_sessions
@@ -159,14 +161,14 @@ class SessionTest < Minitest::Test
     # Make a session
     assert session = Authie::Session.start(controller)
     # Test sessions start without any activity
-    assert_equal nil, session.last_activity_at
-    assert_equal nil, session.last_activity_ip
-    assert_equal nil, session.last_activity_path
+    assert_nil session.last_activity_at
+    assert_nil session.last_activity_ip
+    assert_nil session.last_activity_path
     # Test when sessions are touched, the last activity values are populated
     assert session.touch!
     assert_equal Time, session.last_activity_at.class
-    assert_equal "127.0.0.1", session.last_activity_ip
-    assert_equal "/demo", session.last_activity_path
+    assert_equal '127.0.0.1', session.last_activity_ip
+    assert_equal '/demo', session.last_activity_path
   end
 
   def test_touching_sessions_while_invalid_raises_an_error
@@ -189,7 +191,7 @@ class SessionTest < Minitest::Test
     # Make a session
     assert session = Authie::Session.start(controller)
     # Test there's no data to start with
-    assert_equal nil, session.get(:hello)
+    assert_nil session.get(:hello)
     # Test setting data returns the set value
     assert session.set(:hello, 'world')
     # Test retriving the data from the current instance
@@ -208,14 +210,14 @@ class SessionTest < Minitest::Test
     # Remove the session
     assert session.destroy
     # Test that it no longer exists
-    assert_equal nil, controller.cookies[:user_session]
+    assert_nil controller.cookies[:user_session]
   end
 
   def test_sessions_can_be_associated_with_users
-    user = User.create(:username => 'tester')
+    user = User.create(username: 'tester')
     controller = FakeController.new
     # Make a session
-    assert session = Authie::Session.start(controller, :user => user)
+    assert session = Authie::Session.start(controller, user: user)
     # Test that the user is set
     assert_equal user, session.user
     # Test the user has the session associated
@@ -235,13 +237,15 @@ class SessionTest < Minitest::Test
   end
 
   def test_sessions_can_invalidate_all_other_sessions_for_a_user
-    user = User.create(:username => 'tester')
+    user = User.create(username: 'tester')
     # Make some sessions for a new in lots of controllers
-    assert session1 = Authie::Session.start(FakeController.new(:browser_id => 'b1'), :user => user)
-    assert session2 = Authie::Session.start(FakeController.new(:browser_id => 'b2'), :user => user)
-    assert session3 = Authie::Session.start(FakeController.new(:browser_id => 'b3'), :user => user)
+    assert session1 = Authie::Session.start(FakeController.new(browser_id: 'b1'), user: user)
+    assert session2 = Authie::Session.start(FakeController.new(browser_id: 'b2'), user: user)
+    assert session3 = Authie::Session.start(FakeController.new(browser_id: 'b3'), user: user)
     # Reload all the sessions
-    session1.reload; session2.reload; session3.reload
+    session1.reload
+    session2.reload
+    session3.reload
     # Test they're all active
     assert_equal true, session1.active?
     assert_equal true, session2.active?
@@ -249,32 +253,34 @@ class SessionTest < Minitest::Test
     # Test that invalidating all sessions for a given session invalidates all
     # but the current session
     assert session1.invalidate_others!
-    session1.reload; session2.reload; session3.reload
+    session1.reload
+    session2.reload
+    session3.reload
     assert_equal true, session1.active?
     assert_equal false, session2.active?
     assert_equal false, session3.active?
   end
 
   def test_sudo_functions!
-    user = User.create(:username => 'tester')
+    user = User.create(username: 'tester')
     controller = FakeController.new
     # Make a session
-    assert session = Authie::Session.start(controller, :user => user)
-    assert_equal nil, session.password_seen_at
+    assert session = Authie::Session.start(controller, user: user)
+    assert_nil session.password_seen_at
     assert_equal false, session.recently_seen_password?
     # Test that you can mark as password as seen
     assert session.see_password!
     assert_equal Time, session.password_seen_at.class
     assert_equal true, session.recently_seen_password?
     # Test that older passwords are not seen recently
-    session.update!(:password_seen_at => 2.hours.ago)
+    session.update!(password_seen_at: 2.hours.ago)
     assert_equal false, session.recently_seen_password?
   end
 
   def test_two_factor_functions
-    user = User.create(:username => 'tester')
+    user = User.create(username: 'tester')
     controller = FakeController.new
-    assert session = Authie::Session.start(controller, :user => user)
+    assert session = Authie::Session.start(controller, user: user)
     # Test that the session isn't two factored
     assert_equal false, session.two_factored?
     # Mark the session has two-factored
@@ -286,11 +292,11 @@ class SessionTest < Minitest::Test
   end
 
   def test_user_impersonation
-    user1 = User.create(:username => 'tester1')
-    user2 = User.create(:username => 'tester2')
+    user1 = User.create(username: 'tester1')
+    user2 = User.create(username: 'tester2')
     controller = FakeController.new
     # Make a new session for the original user
-    assert session = Authie::Session.start(controller, :user => user1)
+    assert session = Authie::Session.start(controller, user: user1)
     # Impersonate a user and test that a new session is returned
     assert new_session = session.impersonate!(user2)
     assert_equal Authie::Session, new_session.class
@@ -307,21 +313,20 @@ class SessionTest < Minitest::Test
   end
 
   def test_first_session_for_browser
-    user = User.create(:username => 'tester1')
-    controller = FakeController.new(:browser_id => 'browser1')
-    assert session = Authie::Session.start(controller, :user => user)
+    user = User.create(username: 'tester1')
+    controller = FakeController.new(browser_id: 'browser1')
+    assert session = Authie::Session.start(controller, user: user)
     assert_equal session.first_session_for_browser?, true
-    assert session = Authie::Session.start(controller, :user => user)
+    assert session = Authie::Session.start(controller, user: user)
     assert_equal session.first_session_for_browser?, false
   end
 
   def test_first_session_for_ip
-    user = User.create(:username => 'tester1')
-    controller = FakeController.new(:browser_id => 'browser1')
-    assert session = Authie::Session.start(controller, :user => user)
+    user = User.create(username: 'tester1')
+    controller = FakeController.new(browser_id: 'browser1')
+    assert session = Authie::Session.start(controller, user: user)
     assert_equal session.first_session_for_ip?, true
-    assert session = Authie::Session.start(controller, :user => user)
+    assert session = Authie::Session.start(controller, user: user)
     assert_equal session.first_session_for_ip?, false
   end
-
 end

@@ -1,19 +1,27 @@
+# frozen_string_literal: true
+
 require 'minitest/autorun'
 require 'active_record'
 require 'authie'
 
-ActiveRecord::Base.establish_connection adapter: "sqlite3", database: ":memory:"
-ActiveRecord::Migrator.migrate(File.expand_path('../../db/migrate', __FILE__))
+ActiveRecord::Base.establish_connection adapter: 'sqlite3', database: ':memory:'
+
+if ActiveRecord.version < Gem::Version.create('6.0.0')
+  ActiveRecord::Migrator.migrate(File.expand_path('../db/migrate', __dir__))
+else
+  ActiveRecord::MigrationContext.new(File.expand_path('../db/migrate', __dir__),
+                                     ActiveRecord::SchemaMigration).migrate(nil)
+end
+
 ActiveRecord::Migration.create_table :users do |t|
   t.string :username
 end
 
 class User < ActiveRecord::Base
-  has_many :sessions, :class_name => 'Authie::Session', :foreign_key => 'user_id', :dependent => :destroy
+  has_many :sessions, class_name: 'Authie::Session', foreign_key: 'user_id', dependent: :destroy
 end
 
 class FakeController
-
   def initialize(options = {})
     @options = options
   end
@@ -25,7 +33,6 @@ class FakeController
   def request
     @request ||= FakeRequest.new(@options)
   end
-
 end
 
 class FakeRequest
@@ -34,11 +41,11 @@ class FakeRequest
   end
 
   def ip
-    "127.0.0.1"
+    '127.0.0.1'
   end
 
   def user_agent
-    "TestSuite"
+    'TestSuite'
   end
 
   def ssl?
@@ -46,11 +53,11 @@ class FakeRequest
   end
 
   def path
-    "/demo"
+    '/demo'
   end
 
   def host
-    @options[:host] || "test.example.com"
+    @options[:host] || 'test.example.com'
   end
 end
 
@@ -58,13 +65,9 @@ class FakeCookieJar
   def initialize(options = {})
     @options = options
     @raw = {}
-    if @options[:browser_id]
-      @raw[:browser_id] = @options[:browser_id]
-    end
+    @raw[:browser_id] = @options[:browser_id] if @options[:browser_id]
 
-    if @options[:user_session]
-      @raw[:user_session] = @options[:user_session]
-    end
+    @raw[:user_session] = @options[:user_session] if @options[:user_session]
   end
 
   attr_reader :raw
@@ -80,11 +83,7 @@ class FakeCookieJar
 
   def expiry_for(key)
     value = @raw[key.to_sym]
-    if value.is_a?(Hash)
-      value[:expires]
-    else
-      nil
-    end
+    value[:expires] if value.is_a?(Hash)
   end
 
   def []=(key, value)

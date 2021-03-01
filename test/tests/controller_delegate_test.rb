@@ -1,7 +1,8 @@
+# frozen_string_literal: true
+
 require 'authie/controller_delegate'
 
 class ControllerDelegateTest < Minitest::Test
-
   def setup
     @controller = FakeController.new
     @delegate = Authie::ControllerDelegate.new(@controller)
@@ -11,7 +12,7 @@ class ControllerDelegateTest < Minitest::Test
     # Test nobody is logged in by default
     assert_equal false, @delegate.logged_in?
     # Create a user and log them in
-    user = User.create(:username => 'tester')
+    user = User.create(username: 'tester')
     @delegate.create_auth_session(user)
     # Test that we're now logged in
     assert_equal true, @delegate.logged_in?
@@ -23,7 +24,7 @@ class ControllerDelegateTest < Minitest::Test
     # Test nobody is logged in by default
     assert_equal false, @delegate.logged_in?
     # Create a user and log them in
-    user = User.create(:username => 'tester')
+    user = User.create(username: 'tester')
     @delegate.current_user = user
     # Test that we're now logged in
     assert_equal true, @delegate.logged_in?
@@ -32,20 +33,20 @@ class ControllerDelegateTest < Minitest::Test
   end
 
   def test_auth_sessions_can_be_invalidated
-    user = User.create(:username => 'tester')
+    user = User.create(username: 'tester')
     @delegate.create_auth_session(user)
     # Test that we're now logged in
     assert_equal true, @delegate.logged_in?
     # Test we can invalidate session
     assert_equal true, @delegate.invalidate_auth_session
-    assert_equal nil, @delegate.auth_session
+    assert_nil @delegate.auth_session
     assert_equal false, @delegate.logged_in?
-    assert_equal nil, @delegate.current_user
+    assert_nil @delegate.current_user
   end
 
   def test_browser_id_can_be_set
     # Test that there's no browser ID to begin
-    assert_equal nil, @controller.cookies[:browser_id]
+    assert_nil @controller.cookies[:browser_id]
     # Set the browser ID
     @delegate.set_browser_id
     # Test the browser ID looks like a UUID
@@ -55,15 +56,15 @@ class ControllerDelegateTest < Minitest::Test
   end
 
   def test_touching_auth_sessions
-    @delegate.current_user = User.create(:username => 'dave')
-    assert_equal nil, @delegate.auth_session.last_activity_at
+    @delegate.current_user = User.create(username: 'dave')
+    assert_nil @delegate.auth_session.last_activity_at
     @delegate.touch_auth_session
     assert_equal Time, @delegate.auth_session.last_activity_at.class
     assert_equal '127.0.0.1', @delegate.auth_session.last_activity_ip
   end
 
   def test_touching_auth_sessions_raises_errors
-    @delegate.current_user = User.create(:username => 'dave')
+    @delegate.current_user = User.create(username: 'dave')
     assert @delegate.auth_session.invalidate!
     assert_raises Authie::Session::InactiveSession do
       @delegate.touch_auth_session
@@ -71,8 +72,8 @@ class ControllerDelegateTest < Minitest::Test
   end
 
   def test_user_impersonation
-    user1 = User.create(:username => 'steve')
-    user2 = User.create(:username => 'mike')
+    user1 = User.create(username: 'steve')
+    user2 = User.create(username: 'mike')
     @delegate.current_user = user1
     # Test the current user is our current user
     assert_equal user1, @delegate.current_user
@@ -83,7 +84,6 @@ class ControllerDelegateTest < Minitest::Test
   end
 
   def test_current_user_returns_nil_when_not_logged_in
-    assert_equal nil, @delegate.current_user
+    assert_nil @delegate.current_user
   end
-
 end

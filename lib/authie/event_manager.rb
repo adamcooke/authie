@@ -1,15 +1,17 @@
+# frozen_string_literal: true
+
 module Authie
   class EventManager
-
     def initialize
       @callbacks = {}
     end
 
     def dispatch(event, *args)
-      if callbacks = @callbacks[event.to_sym]
-        callbacks.each do |cb|
-          cb.call(*args)
-        end
+      callbacks = @callbacks[event.to_sym]
+      return if callbacks.nil?
+
+      callbacks.each do |cb|
+        cb.call(*args)
       end
     end
 
@@ -19,10 +21,10 @@ module Authie
     end
 
     def remove(event, block)
-      if cb = @callbacks[event.to_sym]
-        cb.delete(block)
-      end
-    end
+      cb = @callbacks[event.to_sym]
+      return if cb.nil?
 
+      cb.delete(block)
+    end
   end
 end

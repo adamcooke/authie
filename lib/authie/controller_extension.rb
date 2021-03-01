@@ -1,8 +1,9 @@
+# frozen_string_literal: true
+
 require 'authie/controller_delegate'
 
 module Authie
   module ControllerExtension
-
     def self.included(base)
       base.helper_method :logged_in?, :current_user, :auth_session
       before_action_method = base.respond_to?(:before_action) ? :before_action : :before_filter
@@ -46,6 +47,5 @@ module Authie
     def auth_session
       auth_session_delegate.auth_session
     end
-
   end
 end

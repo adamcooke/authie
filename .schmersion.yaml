@@ -1,0 +1,26 @@
+# Welcome to the Schmersion config file
+#
+# This is an array of all the commit types that are supported. You can
+# override this to define your own set as needed per-project.
+#
+# types: [feat, fix, style, chore, test, refactor, perf, docs, ci, build, revert]
+#
+# By default, you can use any scope (the word in brackets following the type).
+# If you wish to restrict this, you can define a list of valid scopes.
+# scopes: [auth, api, ...]
+#
+# A key part of the configuration is how you wish to export your CHANGELOG files.w
+exports:
+  - name: CHANGELOG.md
+    formatter: markdown
+    options:
+      title: CHANGELOG
+      description: This file contains all the latest changes and updates to Authie.
+      sections:
+        - title: Features
+          types: [feat]
+        - title: Bug Fixes
+          types: [fix]
+#
+# There are additional options you can define, check out the README for details.
+# https://github.com/krystal/schmersion

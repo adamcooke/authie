@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # If you're dealing with your authentication in a middleware and you only have
 # access to your rack environment, this will wrap around rack and make it look
 # close enough to an ActionController to work with Authie
@@ -9,7 +11,6 @@
 
 module Authie
   class RackController
-
     attr_reader :request
 
     def initialize(env)
@@ -26,27 +27,22 @@ module Authie
     def set_browser_id
       until cookies[:browser_id]
         proposed_browser_id = SecureRandom.uuid
-        unless Session.where(:browser_id => proposed_browser_id).exists?
-          cookies[:browser_id] = {:value => proposed_browser_id, :expires => 20.years.from_now}
+        unless Session.where(browser_id: proposed_browser_id).exists?
+          cookies[:browser_id] = { value: proposed_browser_id, expires: 20.years.from_now }
         end
       end
     end
 
     def current_user=(user)
-      Session.start(self, :user => user)
+      Session.start(self, user: user)
     end
 
     def current_user
-      if auth_session.is_a?(Session)
-        auth_session.user
-      else
-        nil
-      end
+      auth_session.user if auth_session.is_a?(Session)
     end
 
     def auth_session
       @auth_session ||= Session.get_session(self)
     end
-
   end
 end

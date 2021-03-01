@@ -1,8 +1,9 @@
+# frozen_string_literal: true
+
 require 'authie/event_manager'
 
 module Authie
   class Config
-
     def initialize
       @callbacks = {}
     end
@@ -10,17 +11,15 @@ module Authie
     def session_inactivity_timeout
       @session_inactivity_timeout || 12.hours
     end
-    attr_writer :session_inactivity_timeout
+    attr_writer :session_inactivity_timeout, :persistent_session_length, :sudo_session_timeout, :browser_id_cookie_name
 
     def persistent_session_length
       @persistent_session_length || 2.months
     end
-    attr_writer :persistent_session_length
 
     def sudo_session_timeout
       @sudo_session_timeout || 10.minutes
     end
-    attr_writer :sudo_session_timeout
 
     def user_relationship_options
       @user_relationship_options ||= {}
@@ -29,10 +28,9 @@ module Authie
     def browser_id_cookie_name
       @browser_id_cookie_name || :browser_id
     end
-    attr_writer :browser_id_cookie_name
 
     def events
-      @event_manager ||= EventManager.new
+      @events ||= EventManager.new
     end
   end
 
@@ -44,5 +42,4 @@ module Authie
     block.call(config)
     config
   end
-
 end
