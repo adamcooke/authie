@@ -1,5 +1,5 @@
 PATH
-  remote: .
+  remote: ..
   specs:
     authie (0.0.0.dev)
       activerecord (>= 5.0, < 8.0)
@@ -8,20 +8,22 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    activemodel (7.0.2.4)
-      activesupport (= 7.0.2.4)
-    activerecord (7.0.2.4)
-      activemodel (= 7.0.2.4)
-      activesupport (= 7.0.2.4)
-    activesupport (7.0.2.4)
+    activemodel (5.2.7.1)
+      activesupport (= 5.2.7.1)
+    activerecord (5.2.7.1)
+      activemodel (= 5.2.7.1)
+      activesupport (= 5.2.7.1)
+      arel (>= 9.0)
+    activesupport (5.2.7.1)
       concurrent-ruby (~> 1.0, >= 1.0.2)
-      i18n (>= 1.6, < 2)
-      minitest (>= 5.1)
-      tzinfo (~> 2.0)
+      i18n (>= 0.7, < 2)
+      minitest (~> 5.1)
+      tzinfo (~> 1.1)
     appraisal (2.4.1)
       bundler
       rake
       thor (>= 0.14.0)
+    arel (9.0.0)
     ast (2.4.2)
     concurrent-ruby (1.1.10)
     i18n (1.10.0)
@@ -34,13 +36,13 @@ GEM
     rake (13.0.6)
     regexp_parser (2.3.1)
     rexml (3.2.5)
-    rubocop (1.17.0)
+    rubocop (1.28.2)
       parallel (~> 1.10)
-      parser (>= 3.0.0.0)
+      parser (>= 3.1.0.0)
       rainbow (>= 2.2.2, < 4.0)
       regexp_parser (>= 1.8, < 3.0)
       rexml
-      rubocop-ast (>= 1.7.0, < 2.0)
+      rubocop-ast (>= 1.17.0, < 2.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 1.4.0, < 3.0)
     rubocop-ast (1.17.0)
@@ -49,20 +51,22 @@ GEM
     secure_random_string (1.0.0)
     sqlite3 (1.4.2)
     thor (1.2.1)
-    tzinfo (2.0.4)
-      concurrent-ruby (~> 1.0)
+    thread_safe (0.3.6)
+    tzinfo (1.2.9)
+      thread_safe (~> 0.1)
     unicode-display_width (2.1.0)
 
 PLATFORMS
   arm64-darwin-21
 
 DEPENDENCIES
-  appraisal (= 2.4.1)
+  activerecord (= 5.2.7.1)
+  appraisal
   authie!
-  minitest (= 5.15.0)
-  rake (= 13.0.6)
-  rubocop (= 1.17.0)
-  sqlite3 (= 1.4.2)
+  minitest
+  rake
+  rubocop
+  sqlite3
 
 BUNDLED WITH
    2.3.5
