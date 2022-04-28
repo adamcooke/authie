@@ -5,13 +5,10 @@ require 'active_record'
 require 'authie'
 
 ActiveRecord::Base.establish_connection adapter: 'sqlite3', database: ':memory:'
+ActiveRecord::Migration.verbose = true
 
-if ActiveRecord.version < Gem::Version.create('6.0.0')
-  ActiveRecord::Migrator.migrate(File.expand_path('../db/migrate', __dir__))
-else
-  ActiveRecord::MigrationContext.new(File.expand_path('../db/migrate', __dir__),
-                                     ActiveRecord::SchemaMigration).migrate(nil)
-end
+ActiveRecord::MigrationContext.new(File.expand_path('../db/migrate', __dir__),
+                                   ActiveRecord::SchemaMigration).migrate(nil)
 
 ActiveRecord::Migration.create_table :users do |t|
   t.string :username

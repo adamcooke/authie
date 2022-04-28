@@ -1,5 +1,5 @@
 PATH
-  remote: .
+  remote: ..
   specs:
     authie (0.0.0.dev)
       activerecord (>= 5.0, < 8.0)
@@ -59,6 +59,7 @@ PLATFORMS
   arm64-darwin-21
 
 DEPENDENCIES
+  activerecord (= 6.1.5.1)
   appraisal (= 2.4.1)
   authie!
   minitest (= 5.15.0)
