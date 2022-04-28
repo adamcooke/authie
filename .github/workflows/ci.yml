@@ -41,7 +41,7 @@ jobs:
         run: bundle install
 
       - name: Run tests
-        run: bundle rake
+        run: bundle exec rake
 
   release:
     runs-on: ubuntu-latest
