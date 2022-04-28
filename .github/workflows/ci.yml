@@ -33,7 +33,7 @@ jobs:
           ruby-version: ${{ matrix.ruby_version }}
 
       - name: Install dependencies
-        run: bundle install
+        run: bundle install && bundle exec appraisal install
 
       - name: Run tests
         run: bundle exec appraisal rake
