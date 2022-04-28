@@ -13,8 +13,9 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib']
   s.authors       = ['Adam Cooke']
   s.email         = ['me@adamcooke.io']
-  s.add_dependency  'secure_random_string'
-  s.add_dependency   'activerecord', '>= 5.0', '< 8.0'
+
+  s.add_dependency 'activerecord', '>= 5.0', '< 8.0'
+  s.add_dependency 'secure_random_string'
 
   s.add_development_dependency 'appraisal', '2.4.1'
   s.add_development_dependency 'minitest', '5.15.0'

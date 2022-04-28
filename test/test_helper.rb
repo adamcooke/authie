@@ -8,7 +8,7 @@ ActiveRecord::Base.establish_connection adapter: 'sqlite3', database: ':memory:'
 ActiveRecord::Migration.verbose = true
 
 ActiveRecord::MigrationContext.new(File.expand_path('../db/migrate', __dir__),
-                                     ActiveRecord::SchemaMigration).migrate(nil)
+                                   ActiveRecord::SchemaMigration).migrate(nil)
 
 ActiveRecord::Migration.create_table :users do |t|
   t.string :username
