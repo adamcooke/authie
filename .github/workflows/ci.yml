@@ -37,7 +37,7 @@ jobs:
           ruby-version: ${{ matrix.ruby_version }}
 
       - name: Install dependencies
-        run: bundle install && bundle exec appraisal ${{ matrix.gemfile }} bundle install
+        run: gem install appraisal -v 2.4.1 && bundle exec appraisal ${{ matrix.gemfile }} bundle install
 
       - name: Run tests
         run: bundle exec appraisal ${{ matrix.gemfile }} rake
