@@ -59,7 +59,6 @@ PLATFORMS
   arm64-darwin-21
 
 DEPENDENCIES
-  activerecord
   appraisal (= 2.4.1)
   authie!
   minitest (= 5.15.0)
