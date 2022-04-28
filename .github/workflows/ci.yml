@@ -29,6 +29,9 @@ jobs:
         gemfile:
           - activerecord_6.1
           - activerecord_7.0
+        exclude:
+          - ruby_version: 2.6
+            gemfile: activerecord_7.0
     env:
       BUNDLE_GEMFILE: ${{ github.workspace }}/gemfiles/${{ matrix.gemfile }}.gemfile
     steps:
