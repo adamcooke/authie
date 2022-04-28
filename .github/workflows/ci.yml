@@ -26,6 +26,10 @@ jobs:
           - 2.7
           - '3.0'
           - 3.1
+        gemfile:
+          - activerecord-6.1
+          - activerecord-7.0
+
     steps:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1
@@ -33,10 +37,10 @@ jobs:
           ruby-version: ${{ matrix.ruby_version }}
 
       - name: Install dependencies
-        run: bundle install && bundle exec appraisal install
+        run: bundle install && bundle exec appraisal ${{ matrix.gemfile }} install
 
       - name: Run tests
-        run: bundle exec appraisal rake
+        run: bundle exec appraisal ${{ matrix.gemfile }} rake
 
   release:
     runs-on: ubuntu-latest
