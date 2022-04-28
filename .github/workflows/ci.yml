@@ -27,9 +27,10 @@ jobs:
           - '3.0'
           - 3.1
         gemfile:
-          - activerecord-6.1
-          - activerecord-7.0
-
+          - activerecord_6.1
+          - activerecord_7.0
+    env:
+      BUNDLE_GEMFILE: ${{ github.workspace }}/gemfiles/${{ matrix.gemfile }}.gemfile
     steps:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1
@@ -37,10 +38,10 @@ jobs:
           ruby-version: ${{ matrix.ruby_version }}
 
       - name: Install dependencies
-        run: gem install appraisal -v 2.4.1 && appraisal ${{ matrix.gemfile }} bundle install
+        run: bundle install
 
       - name: Run tests
-        run: appraisal ${{ matrix.gemfile }} rake
+        run: bundle rake
 
   release:
     runs-on: ubuntu-latest
