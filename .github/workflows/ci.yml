@@ -72,7 +72,7 @@ jobs:
           printf -- "---\n:rubygems_api_key: ${RUBYGEMS_API_KEY}\n" > $HOME/.gem/credentials
           printf -- ":github: Bearer ${GITHUB_API_KEY}\n" >> $HOME/.gem/credentials
         env:
-          RUBYGEMS_API_KEY: ${{secrets.KRYSTAL_RUBYGEMS_API_KEY}}
+          RUBYGEMS_API_KEY: ${{secrets.RUBYGEMS_API_KEY}}
           GITHUB_API_KEY: ${{secrets.GITHUB_TOKEN}}
 
       - name: Publish to RubyGems
