@@ -139,7 +139,7 @@ In order to invalidate a session you can simply invalidate it.
 
 ```ruby
 def logout
-  auth_session.invalidate!
+  auth_session.invalidate
   redirect_to login_path, :notice => "Logged out successfully."
 end
 ```
@@ -165,7 +165,7 @@ like this:
 
 ```ruby
 def persist_session
-  auth_session.persist!
+  auth_session.persist
   redirect_to root_path, :notice => "You will now be remembered!"
 end
 ```
@@ -185,7 +185,7 @@ association to your User model.
 
 ```ruby
 class User < ActiveRecord::Base
-  has_many :sessions, :class_name => 'Authie::Session', :as => :user, :dependent => :destroy
+  has_many :sessions, :class_name => 'Authie::SessionModel', :as => :user, :dependent => :destroy
 end
 ```
 
@@ -222,12 +222,12 @@ some methods which can help you keep track of when a user last provided their
 password in a session and whether you need to prompt them before continuing.
 
 ```ruby
-# When the user logs into your application, run the see_password! method to note
+# When the user logs into your application, run the see_password method to note
 # that we have just seen their password.
 def login
   if user = User.authenticate(params[:username], params[:password])
     create_auth_session(user)
-    auth_session.see_password!
+    auth_session.see_password
     redirect_to root_path
   end
 end
@@ -240,7 +240,7 @@ def change_password
   else
     # Redirect the user a page which allows them to re-enter their password.
     # The method here should verify the password is correct and call the
-    # see_password! method as above. Once verified, you can return them back to
+    # see_password method as above. Once verified, you can return them back to
     # this page.
     redirect_to reauth_path(:return_to => request.fullpath)
   end
@@ -291,7 +291,7 @@ class LoginController < ApplicationController
 
   def two_factor_auth
     if user.verify_two_factor_token(params[:token])
-      auth_session.mark_as_two_factored!
+      auth_session.mark_as_two_factored
       redirect_to flash[:two_factor_return_path] || root_path, :notice => "Logged in successfully!"
     end
   end
