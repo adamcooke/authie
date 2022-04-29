@@ -81,4 +81,4 @@ jobs:
 
       - name: Publish to GPR
         run: |
-          gem push --key github --host https://rubygems.pkg.github.com/krystal *.gem
+          gem push --key github --host https://rubygems.pkg.github.com/adamcooke *.gem
