@@ -191,6 +191,29 @@ RSpec.describe Authie::Session do
     end
   end
 
+  describe '.start' do
+    it 'creates a new session with details from the request' do
+      time = Time.new(2022, 3, 4, 2, 31, 22)
+      allow(controller.request).to receive(:ip).and_return('1.2.3.4')
+      Timecop.freeze(time) do
+        session = described_class.start(controller, user: user)
+        expect(session).to be_a Authie::Session
+        expect(session.session.user).to eq user
+        expect(session.session.browser_id).to eq browser_id
+        expect(session.session.login_at).to eq time
+        expect(session.session.login_ip).to eq '1.2.3.4'
+        expect(session.session.host).to eq 'test.host'
+        expect(session.session.user_agent).to eq 'Rails Testing'
+      end
+    end
+
+    it 'invalidates all other sessions for the same browser' do
+      existing_session = Authie::SessionModel.create!(user: user, active: true, browser_id: browser_id)
+      described_class.start(controller, user: user)
+      expect(existing_session.reload.active?).to be false
+    end
+  end
+
   describe '.get_session' do
     it 'returns nil if there is no user session cookie' do
       expect(described_class.get_session(controller)).to be nil
