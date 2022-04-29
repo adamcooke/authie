@@ -4,48 +4,25 @@ require 'authie/controller_delegate'
 
 module Authie
   module ControllerExtension
-    def self.included(base)
-      base.helper_method :logged_in?, :current_user, :auth_session
-      before_action_method = base.respond_to?(:before_action) ? :before_action : :before_filter
-      base.public_send(before_action_method, :set_browser_id, :touch_auth_session)
+    class << self
+      def included(base)
+        base.helper_method :logged_in?, :current_user, :auth_session
+        base.before_action :set_browser_id, :touch_auth_session
+
+        base.delegate :set_browser_id, to: :auth_session_delegate
+        base.delegate :touch_auth_session, to: :auth_session_delegate
+        base.delegate :current_user, to: :auth_session_delegate
+        base.delegate :create_auth_session, to: :auth_session_delegate
+        base.delegate :invalidate_auth_session, to: :auth_session_delegate
+        base.delegate :logged_in?, to: :auth_session_delegate
+        base.delegate :auth_session, to: :auth_session_delegate
+      end
     end
 
     private
 
     def auth_session_delegate
       @auth_session_delegate ||= Authie::ControllerDelegate.new(self)
-    end
-
-    def set_browser_id
-      auth_session_delegate.set_browser_id
-    end
-
-    def touch_auth_session
-      auth_session_delegate.touch_auth_session
-    end
-
-    def current_user
-      auth_session_delegate.current_user
-    end
-
-    def current_user=(user)
-      auth_session_delegate.current_user = user
-    end
-
-    def create_auth_session(user)
-      auth_session_delegate.create_auth_session(user)
-    end
-
-    def invalidate_auth_session
-      auth_session_delegate.invalidate_auth_session
-    end
-
-    def logged_in?
-      auth_session_delegate.logged_in?
-    end
-
-    def auth_session
-      auth_session_delegate.auth_session
     end
   end
 end
