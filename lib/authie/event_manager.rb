@@ -2,6 +2,8 @@
 
 module Authie
   class EventManager
+    attr_reader :callbacks
+
     def initialize
       @callbacks = {}
     end

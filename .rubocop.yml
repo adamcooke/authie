@@ -1,13 +1,14 @@
 AllCops:
   SuggestExtensions: false
+  NewCops: enable
   Exclude:
     - gemfiles/*
     - bin/*
 
-Metrics/MethodLength:
-  Enabled: false
+Style/AccessorGrouping:
+  EnforcedStyle: separated
 
-Metrics/AbcSize:
+Metrics/MethodLength:
   Enabled: false
 
 Metrics/AbcSize:
@@ -23,4 +24,7 @@ Metrics/CyclomaticComplexity:
   Enabled: false
 
 Gemspec/RequiredRubyVersion:
+  Enabled: false
+
+Metrics/BlockLength:
   Enabled: false

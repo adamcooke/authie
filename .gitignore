@@ -1,2 +1,6 @@
 *.gem
-
+spec/dummy/log/*
+spec/dummy/tmp/*
+coverage/*
+Gemfile.lock
+gemfiles/*.gemfile.lock

@@ -4,42 +4,29 @@ require 'authie/event_manager'
 
 module Authie
   class Config
+    attr_accessor :session_inactivity_timeout
+    attr_accessor :persistent_session_length
+    attr_accessor :sudo_session_timeout
+    attr_accessor :browser_id_cookie_name
+    attr_accessor :events
+
     def initialize
-      @callbacks = {}
-    end
-
-    def session_inactivity_timeout
-      @session_inactivity_timeout || 12.hours
-    end
-    attr_writer :session_inactivity_timeout, :persistent_session_length, :sudo_session_timeout, :browser_id_cookie_name
-
-    def persistent_session_length
-      @persistent_session_length || 2.months
-    end
-
-    def sudo_session_timeout
-      @sudo_session_timeout || 10.minutes
-    end
-
-    def user_relationship_options
-      @user_relationship_options ||= {}
-    end
-
-    def browser_id_cookie_name
-      @browser_id_cookie_name || :browser_id
-    end
-
-    def events
-      @events ||= EventManager.new
+      @session_inactivity_timeout = 12.hours
+      @persistent_session_length = 2.months
+      @sudo_session_timeout = 10.minutes
+      @browser_id_cookie_name = :browser_id
+      @events = EventManager.new
     end
   end
 
-  def self.config
-    @config ||= Config.new
-  end
+  class << self
+    def config
+      @config ||= Config.new
+    end
 
-  def self.configure(&block)
-    block.call(config)
-    config
+    def configure(&block)
+      block.call(config)
+      config
+    end
   end
 end
