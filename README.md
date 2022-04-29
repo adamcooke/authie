@@ -214,35 +214,6 @@ def change_password
 end
 ```
 
-### User impersonation
-
-When supporting applications it is often useful to be able to use your application
-from the perspective of your users. Authie allows you to easily impersonate any
-user in your application. Here's a couple of example methods which you could
-implement in a secure admin controller allowing you to impersonate any given user.
-
-```ruby
-class AdminController < ApplicationController
-
-  before_action :ensure_admin_user
-
-  def switch_user
-    user = User.find(params[:other_user_id])
-    auth_session.impersonate!(user)
-    redirect_to root_path, :notice => "You are now logged in as #{user.username}"
-  end
-
-  def revert_session
-    auth_session.revert_to_parent!
-    redirect_to root_path, :notice => "Welcome back."
-  end
-
-end
-```
-
-If when you call `revert_to_parent!` you are not currently using an impersonation
-session, a `Authie::Session::NoParentSessionForRevert` exception will be raised.
-
 ### Sudo functions
 
 In some applications, you may want to require that the user has recently provided
