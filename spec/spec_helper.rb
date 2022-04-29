@@ -8,10 +8,12 @@ ENV['RAILS_ENV'] = 'test'
 if %w[yes true 1].include?(ENV['COVERAGE'])
   require 'simplecov'
   require 'simplecov-console'
+  require 'simplecov_json_formatter'
 
   SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new(
     [
       SimpleCov::Formatter::HTMLFormatter,
+      SimpleCov::Formatter::JSONFormatter,
       SimpleCov::Formatter::Console
     ]
   )

@@ -46,6 +46,28 @@ jobs:
       - name: Run tests
         run: bundle exec rspec
 
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.1
+
+      - name: Install dependencies
+        run: bundle install
+
+      - name: Generate and publish coverage
+        uses: paambaati/codeclimate-action@v3.0.0
+        env:
+          COVERAGE: "1"
+          CC_TEST_REPORTER_ID: "${{ secrets.CC_TEST_REPORTER_ID }}"
+        with:
+          coverageCommand: bundle exec rspec
+          prefix: "${{ github.workspace }}"
+          coverageLocations: |
+            ${{ github.workspace }}/coverage/coverage.json:simplecov
+
   release:
     runs-on: ubuntu-latest
     needs: [lint, test]
