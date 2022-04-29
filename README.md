@@ -1,6 +1,6 @@
 # Authie
 
-[![CI](https://github.com/adamcooke/authie/actions/workflows/ci.yml/badge.svg)](https://github.com/adamcooke/authie/actions/workflows/ci.yml) [![Gem Version](https://badge.fury.io/rb/authie.svg)](https://badge.fury.io/rb/authie)
+[![CI](https://github.com/adamcooke/authie/actions/workflows/ci.yml/badge.svg)](https://github.com/adamcooke/authie/actions/workflows/ci.yml) [![Gem Version](https://badge.fury.io/rb/authie.svg)](https://badge.fury.io/rb/authie) [![Coverage](https://img.shields.io/codeclimate/coverage/adamcooke/authie.svg?logo=code%20climate)](https://codeclimate.com/github/adamcooke/authie)
 
 This is a Rails library which provides applications with a database-backed user
 sessions. This ensures that user sessions can be invalidated from the server and
