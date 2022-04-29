@@ -61,9 +61,9 @@ module Authie
     # will be invalidated.
     #
     # @return [Authie::Session, nil]
-    def create_auth_session(user)
+    def create_auth_session(user, params = {})
       if user
-        @auth_session = Authie::Session.start(@controller, user: user)
+        @auth_session = Authie::Session.start(@controller, params.merge(user: user))
         return @auth_session
       end
 

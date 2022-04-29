@@ -135,6 +135,15 @@ RSpec.describe Authie::ControllerDelegate do
         expect(session.user).to eq user
         expect(controller.send(:cookies)[:user_session]).to eq session.temporary_token
       end
+
+      it 'can receive other options for the session too' do
+        expiry_time = 6.months.from_now
+        user = User.create!(username: 'adam')
+        session = delegate.create_auth_session(user, expires_at: expiry_time)
+        expect(session).to be_a Authie::Session
+        expect(session.persistent?).to be true
+        expect(session.expires_at).to eq expiry_time
+      end
     end
 
     context 'when nil is provided' do

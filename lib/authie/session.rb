@@ -261,6 +261,7 @@ module Authie
     delegate :active?, to: :session
     delegate :browser_id, to: :session
     delegate :expired?, to: :session
+    delegate :expires_at, to: :session
     delegate :first_session_for_browser?, to: :session
     delegate :first_session_for_ip?, to: :session
     delegate :get, to: :session
