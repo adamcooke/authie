@@ -46,36 +46,11 @@ module Authie
     # @raises [Authie::Session::HostMismatch]
     # @return [Authie::Session]
     def validate
-      if cookies[:browser_id] != @session.browser_id
-        invalidate
-        Authie.config.events.dispatch(:browser_id_mismatch_error, self)
-        raise BrowserMismatch, 'Browser ID mismatch'
-      end
-
-      unless @session.active?
-        invalidate
-        Authie.config.events.dispatch(:invalid_session_error, self)
-        raise InactiveSession, 'Session is no longer active'
-      end
-
-      if @session.expired?
-        invalidate
-        Authie.config.events.dispatch(:expired_session_error, self)
-        raise ExpiredSession, 'Persistent session has expired'
-      end
-
-      if @session.inactive?
-        invalidate
-        Authie.config.events.dispatch(:inactive_session_error, self)
-        raise InactiveSession, 'Non-persistent session has expired'
-      end
-
-      if @session.host && @session.host != @controller.request.host
-        invalidate
-        Authie.config.events.dispatch(:host_mismatch_error, self)
-        raise HostMismatch, "Session was created on #{@session.host} but accessed using #{@controller.request.host}"
-      end
-
+      validate_browser_id
+      validate_active
+      validate_expiry
+      validate_inactivity
+      validate_host
       self
     end
 
@@ -175,6 +150,56 @@ module Authie
 
     def cookies
       @controller.send(:cookies)
+    end
+
+    def validate_browser_id
+      if cookies[:browser_id] != @session.browser_id
+        invalidate
+        Authie.config.events.dispatch(:browser_id_mismatch_error, self)
+        raise BrowserMismatch, 'Browser ID mismatch'
+      end
+
+      self
+    end
+
+    def validate_active
+      unless @session.active?
+        invalidate
+        Authie.config.events.dispatch(:invalid_session_error, self)
+        raise InactiveSession, 'Session is no longer active'
+      end
+
+      self
+    end
+
+    def validate_expiry
+      if @session.expired?
+        invalidate
+        Authie.config.events.dispatch(:expired_session_error, self)
+        raise ExpiredSession, 'Persistent session has expired'
+      end
+
+      self
+    end
+
+    def validate_inactivity
+      if @session.inactive?
+        invalidate
+        Authie.config.events.dispatch(:inactive_session_error, self)
+        raise InactiveSession, 'Non-persistent session has expired'
+      end
+
+      self
+    end
+
+    def validate_host
+      if @session.host && @session.host != @controller.request.host
+        invalidate
+        Authie.config.events.dispatch(:host_mismatch_error, self)
+        raise HostMismatch, "Session was created on #{@session.host} but accessed using #{@controller.request.host}"
+      end
+
+      self
     end
 
     class << self
