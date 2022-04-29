@@ -212,6 +212,23 @@ RSpec.describe Authie::Session do
       described_class.start(controller, user: user)
       expect(existing_session.reload.active?).to be false
     end
+
+    it 'allows persistent sessions to be created' do
+      time = Time.new(2022, 3, 4, 2, 31, 22)
+      Timecop.freeze(time) do
+        session = described_class.start(controller, user: user, persistent: true)
+        expect(session.persistent?).to be true
+        expect(session.expires_at).to eq time + 2.months
+      end
+    end
+
+    it 'allows password to be seen' do
+      time = Time.new(2022, 3, 4, 2, 31, 22)
+      Timecop.freeze(time) do
+        session = described_class.start(controller, user: user, see_password: true)
+        expect(session.password_seen_at).to eq time
+      end
+    end
   end
 
   describe '.get_session' do

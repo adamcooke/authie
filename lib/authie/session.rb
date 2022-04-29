@@ -206,20 +206,22 @@ module Authie
       # Create a new session within the given controller for the
       #
       # @param controller [ActionController::Base]
-      # @option params [ActiveRecord::Base] user
+      # @param user [ActiveRecord::Base] user
+      # @param persistent [Boolean] create a persistent session
       # @return [Authie::Session]
-      def start(controller, params = {})
+      def start(controller, user:, persistent: false, see_password: false, **params)
         cookies = controller.send(:cookies)
         SessionModel.active.where(browser_id: cookies[:browser_id]).each(&:invalidate!)
-        user_object = params.delete(:user)
 
         session = SessionModel.new(params)
-        session.user = user_object
+        session.user = user
         session.browser_id = cookies[:browser_id]
         session.login_at = Time.now
         session.login_ip = controller.request.ip
         session.host = controller.request.host
         session.user_agent = controller.request.user_agent
+        session.expires_at = Time.now + Authie.config.persistent_session_length if persistent
+        session.password_seen_at = Time.now if see_password
         session.save!
 
         new(controller, session).start
