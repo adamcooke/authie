@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'active_record/base'
-require 'secure_random_string'
+require 'securerandom'
 require 'authie/config'
 
 module Authie
@@ -119,7 +119,7 @@ module Authie
     end
 
     def set_new_token
-      self.temporary_token = SecureRandomString.new(44)
+      self.temporary_token = SecureRandom.alphanumeric(Authie.config.session_token_length)
       self.token_hash = self.class.hash_token(temporary_token)
     end
 

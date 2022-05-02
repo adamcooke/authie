@@ -22,7 +22,7 @@ RSpec.describe Authie::SessionModel do
     it 'generates a new token' do
       session_model.save!
       expect(session_model.temporary_token).to be_a String
-      expect(session_model.temporary_token).to match(/\A[A-Za-z0-9]{44}\z/)
+      expect(session_model.temporary_token).to match(/\A[A-Za-z0-9]{64}\z/)
     end
 
     it 'stores the newly generated token as a SHA256 hash' do

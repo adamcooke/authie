@@ -8,6 +8,7 @@ module Authie
     attr_accessor :persistent_session_length
     attr_accessor :sudo_session_timeout
     attr_accessor :browser_id_cookie_name
+    attr_accessor :session_token_length
     attr_accessor :events
 
     def initialize
@@ -15,6 +16,7 @@ module Authie
       @persistent_session_length = 2.months
       @sudo_session_timeout = 10.minutes
       @browser_id_cookie_name = :browser_id
+      @session_token_length = 64
       @events = EventManager.new
     end
   end
