@@ -261,6 +261,24 @@ RSpec.describe Authie::SessionModel do
     end
   end
 
+  context '#reset_token' do
+    it 'sets a new token' do
+      original_token = session_model.temporary_token
+      session_model.reset_token
+      expect(session_model.temporary_token).to_not eq original_token
+    end
+
+    it 'sets a new token hash' do
+      token = session_model.reset_token
+      expect(session_model.token_hash).to eq described_class.hash_token(token)
+    end
+
+    it 'saves the record to the database' do
+      token = session_model.reset_token
+      expect(described_class.find_by(token_hash: described_class.hash_token(token))).to eq session_model
+    end
+  end
+
   context '.find_session_by_token' do
     it 'returns nil if the given token is blank' do
       expect(described_class.find_session_by_token(nil)).to be nil

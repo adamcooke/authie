@@ -102,6 +102,15 @@ module Authie
       self.class.where('id < ?', id).for_user(user).where(login_ip: login_ip).empty?
     end
 
+    # Reset a new token for the session and return the new token
+    #
+    # @return [String]
+    def reset_token
+      set_new_token
+      save!
+      temporary_token
+    end
+
     private
 
     def shorten_strings

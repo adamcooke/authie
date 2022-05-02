@@ -191,6 +191,24 @@ RSpec.describe Authie::Session do
     end
   end
 
+  describe '#reset_token' do
+    it 'sets a new token on the session' do
+      expect(session.session).to receive(:reset_token)
+      session.reset_token
+    end
+
+    it 'updates the cookie' do
+      original_cookie_value = controller.send(:cookies)[:user_session]
+      session.reset_token
+      expect(controller.send(:cookies)[:user_session]).to_not eq original_cookie_value
+      expect(controller.send(:cookies)[:user_session]).to eq session.temporary_token
+    end
+
+    it 'returns itself' do
+      expect(session.reset_token).to be session
+    end
+  end
+
   describe '.start' do
     it 'creates a new session with details from the request' do
       time = Time.new(2022, 3, 4, 2, 31, 22)

@@ -132,6 +132,15 @@ module Authie
       self
     end
 
+    # Resets the token for the currently active session to a new string
+    #
+    # @return [Authie::Session]
+    def reset_token
+      @session.reset_token
+      set_cookie
+      self
+    end
+
     private
 
     # rubocop:disable Naming/AccessorMethodName
