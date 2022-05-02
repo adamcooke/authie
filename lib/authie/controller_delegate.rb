@@ -9,10 +9,13 @@ module Authie
   # The controller delegate implements methods that can be used by a controller. These are then
   # extended into controllers as needed (see ControllerExtension).
   class ControllerDelegate
+    attr_accessor :touch_auth_session_enabled
+
     # @param controller [ActionController::Base]
     # @return [Authie::ControllerDelegate]
     def initialize(controller)
       @controller = controller
+      @touch_auth_session_enabled = true
     end
 
     # Sets a browser ID. This must be performed on any page request where AUthie will be used.
@@ -52,7 +55,7 @@ module Authie
     def touch_auth_session
       yield if block_given?
     ensure
-      auth_session.touch if logged_in?
+      auth_session.touch if @touch_auth_session_enabled && logged_in?
     end
 
     # Return the user for the currently logged in user or nil if no user is logged in

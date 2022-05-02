@@ -57,6 +57,12 @@ RSpec.describe Authie::ControllerDelegate do
       it 'will return the return value of the executed block' do
         expect(delegate.touch_auth_session { 1234 }).to eq 1234
       end
+
+      it 'will not touch the session if disabled' do
+        delegate.touch_auth_session_enabled = false
+        expect(delegate.auth_session).to_not receive(:touch)
+        delegate.touch_auth_session
+      end
     end
   end
 

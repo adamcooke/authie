@@ -26,5 +26,9 @@ module Authie
     def auth_session_delegate
       @auth_session_delegate ||= Authie::ControllerDelegate.new(self)
     end
+
+    def skip_touch_auth_session!
+      auth_session_delegate.touch_auth_session_enabled = false
+    end
   end
 end

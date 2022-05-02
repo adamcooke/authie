@@ -6,4 +6,5 @@ Rails.application.routes.draw do
   get '/logged_in', to: 'pages#logged_in'
   get '/request_count', to: 'pages#request_count'
   get '/error', to: 'pages#error'
+  get '/no_touching', to: 'pages#no_touching'
 end

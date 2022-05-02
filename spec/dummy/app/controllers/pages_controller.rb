@@ -24,4 +24,9 @@ class PagesController < ApplicationController
   def error
     1 / 0
   end
+
+  def no_touching
+    skip_touch_auth_session!
+    render plain: 'Blah'
+  end
 end

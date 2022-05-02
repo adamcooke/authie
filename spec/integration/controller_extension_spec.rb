@@ -34,6 +34,16 @@ RSpec.describe PagesController, type: :controller do
     end
   end
 
+  it 'does not touch sessions were touching has been disabled' do
+    session = setup_session
+    time = session.login_at + 5.minutes
+    Timecop.freeze(time) { get :index }
+    Timecop.freeze(time + 10.minutes) { get :no_touching }
+    session.reload
+    expect(session.last_activity_path).to eq '/'
+    expect(session.last_activity_at).to eq time
+  end
+
   it 'touches the session even if there is an error' do
     session = setup_session
     time = Time.new(2022, 2, 4, 2, 11)
@@ -68,7 +78,11 @@ RSpec.describe PagesController, type: :controller do
   def setup_session
     browser_id = SecureRandom.uuid
     user = User.create!(username: 'adam')
-    session = Authie::SessionModel.create!(user: user, browser_id: browser_id, active: true)
+    session = Authie::SessionModel.create!(user: user,
+                                           login_at: Time.current,
+                                           login_ip: '1.2.3.4',
+                                           browser_id: browser_id,
+                                           active: true)
     if block_given?
       yield(session)
       session.save!
