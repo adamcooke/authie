@@ -19,15 +19,8 @@ module Authie
     # Attributes
     serialize :data, Hash
 
-    before_validation do
-      self.user_agent = user_agent[0, 255] if user_agent.is_a?(String)
-      self.last_activity_path = last_activity_path[0, 255] if last_activity_path.is_a?(String)
-    end
-
-    before_create do
-      self.temporary_token = SecureRandomString.new(44)
-      self.token_hash = self.class.hash_token(temporary_token)
-    end
+    before_validation :shorten_strings
+    before_create :set_new_token
 
     # Return the user that
     def user
@@ -107,6 +100,18 @@ module Authie
     # Is this the first session for the IP?
     def first_session_for_ip?
       self.class.where('id < ?', id).for_user(user).where(login_ip: login_ip).empty?
+    end
+
+    private
+
+    def shorten_strings
+      self.user_agent = user_agent[0, 255] if user_agent.is_a?(String)
+      self.last_activity_path = last_activity_path[0, 255] if last_activity_path.is_a?(String)
+    end
+
+    def set_new_token
+      self.temporary_token = SecureRandomString.new(44)
+      self.token_hash = self.class.hash_token(temporary_token)
     end
 
     class << self
