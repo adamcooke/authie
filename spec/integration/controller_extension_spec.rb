@@ -36,12 +36,11 @@ RSpec.describe PagesController, type: :controller do
 
   it 'does not touch sessions were touching has been disabled' do
     session = setup_session
-    time = session.login_at + 5.minutes
-    Timecop.freeze(time) { get :index }
-    Timecop.freeze(time + 10.minutes) { get :no_touching }
+    Timecop.freeze(session.login_at) { get :index }
+    Timecop.freeze(session.login_at + 10.minutes) { get :no_touching }
     session.reload
     expect(session.last_activity_path).to eq '/'
-    expect(session.last_activity_at).to eq time
+    expect(session.last_activity_at).to eq session.login_at
   end
 
   it 'touches the session even if there is an error' do
