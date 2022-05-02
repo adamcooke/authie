@@ -43,9 +43,19 @@ RSpec.describe Authie::ControllerDelegate do
     end
 
     describe '#touch_auth_session' do
-      it 'will call the touch method on the underlying session and return its result' do
-        expect(delegate.auth_session).to receive(:touch).and_return 1234
-        expect(delegate.touch_auth_session).to eq 1234
+      it 'will call the touch method on the underlying' do
+        expect(delegate.auth_session).to receive(:touch)
+        delegate.touch_auth_session
+      end
+
+      it 'will call a block before running touch' do
+        count = 0
+        delegate.touch_auth_session { count += 1 }
+        expect(count).to eq 1
+      end
+
+      it 'will return the return value of the executed block' do
+        expect(delegate.touch_auth_session { 1234 }).to eq 1234
       end
     end
   end
@@ -70,8 +80,8 @@ RSpec.describe Authie::ControllerDelegate do
     end
 
     describe '#touch_auth_session' do
-      it 'will return false' do
-        expect(delegate.touch_auth_session).to be false
+      it 'will execute the block and return the value' do
+        expect(delegate.touch_auth_session { 'abcdef' }).to eq 'abcdef'
       end
     end
   end

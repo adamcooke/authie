@@ -30,8 +30,19 @@ RSpec.describe PagesController, type: :controller do
     setup_session
     3.times do |i|
       get :request_count
-      expect(response.body).to eq "Count: #{i + 1}"
+      expect(response.body).to eq "Count: #{i}"
     end
+  end
+
+  it 'touches the session even if there is an error' do
+    session = setup_session
+    time = Time.new(2022, 2, 4, 2, 11)
+    Timecop.freeze(time) do
+      expect { get :error }.to raise_error ZeroDivisionError
+    end
+    session.reload
+    expect(session.last_activity_path).to eq '/error'
+    expect(session.last_activity_at).to eq time
   end
 
   it 'raises an error if the browser ID mismatches' do

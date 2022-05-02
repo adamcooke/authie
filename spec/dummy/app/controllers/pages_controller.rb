@@ -20,4 +20,8 @@ class PagesController < ApplicationController
       render plain: 'Not logged in'
     end
   end
+
+  def error
+    1 / 0
+  end
 end

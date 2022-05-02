@@ -117,8 +117,8 @@ RSpec.describe Authie::Session do
   end
 
   describe '#touch' do
-    it 'calls the validate method' do
-      expect(session).to receive(:validate).and_return true
+    it 'not call the validate method as it previously did' do
+      expect(session).to_not receive(:validate)
       session.touch
     end
 

@@ -88,7 +88,6 @@ module Authie
     # @raises [ActiveRecord::RecordInvalid]
     # @return [Authie::Session]
     def touch
-      validate
       @session.last_activity_at = Time.now
       @session.last_activity_ip = @controller.request.ip
       @session.last_activity_path = @controller.request.path

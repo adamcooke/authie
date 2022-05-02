@@ -7,9 +7,11 @@ module Authie
     class << self
       def included(base)
         base.helper_method :logged_in?, :current_user, :auth_session
-        base.before_action :set_browser_id, :touch_auth_session
+        base.before_action :set_browser_id, :validate_auth_session
+        base.around_action :touch_auth_session
 
         base.delegate :set_browser_id, to: :auth_session_delegate
+        base.delegate :validate_auth_session, to: :auth_session_delegate
         base.delegate :touch_auth_session, to: :auth_session_delegate
         base.delegate :current_user, to: :auth_session_delegate
         base.delegate :create_auth_session, to: :auth_session_delegate

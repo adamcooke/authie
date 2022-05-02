@@ -36,16 +36,23 @@ module Authie
       proposed_browser_id
     end
 
-    # Touch the session on each request to ensure that it is validated and all last activity
-    # information is updated. This will return the session if one has been touched otherwise
-    # it will reteurn false if there is no session/not logged in. It is safe to run this on
-    # all requests even if there is no session.
+    # Validate the auth session to ensure that it is current validate and raise an error if it
+    # is not suitable for use.
+    #
+    # @return [Authie::Session, false]
+    def validate_auth_session
+      return auth_session.validate if logged_in?
+
+      false
+    end
+
+    # Touch the session to update details on the latest activity.
     #
     # @return [Authie::Session, false]
     def touch_auth_session
-      return auth_session.touch if logged_in?
-
-      false
+      yield if block_given?
+    ensure
+      auth_session.touch if logged_in?
     end
 
     # Return the user for the currently logged in user or nil if no user is logged in
