@@ -92,6 +92,7 @@ module Authie
       @session.last_activity_ip = @controller.request.ip
       @session.last_activity_path = @controller.request.path
       @session.requests += 1
+      extend_session_expiry_if_appropriate
       @session.save!
       Authie.config.events.dispatch(:session_touched, self)
       self
@@ -208,6 +209,16 @@ module Authie
       end
 
       self
+    end
+
+    def extend_session_expiry_if_appropriate
+      return if @session.expires_at.nil?
+      return unless Authie.config.extend_session_expiry_on_touch
+
+      # If enabled, sessions with an expiry time will automatiaclly be incremented
+      # whenever a page is touched. The cookie will also be updated as appropriate.
+      @session.expires_at = Authie.config.persistent_session_length.from_now
+      set_cookie
     end
 
     class << self

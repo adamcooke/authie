@@ -153,6 +153,57 @@ RSpec.describe Authie::Session do
       expect(Authie.config.events).to receive(:dispatch).with(:session_touched, session)
       session.touch
     end
+
+    context 'when session expiry extension is not enabled' do
+      subject(:session_model) do
+        Authie::SessionModel.create!(user: user, browser_id: browser_id, expires_at: 4.hours.from_now)
+      end
+
+      before { allow(Authie.config).to receive(:extend_session_expiry_on_touch).and_return(false) }
+
+      it 'does not extend the expiry date on the session' do
+        original_time = session_model.expires_at
+        Timecop.freeze(original_time + 10.hours) { session.touch }
+        session.session.reload
+        expect(session.expires_at).to eq original_time
+      end
+
+      it 'does not set the expiry time' do
+        expect(session.session).to_not receive(:expires_at=)
+        session.touch
+      end
+
+      it 'does not update the cookie' do
+        expect(session).to_not receive(:set_cookie)
+        session.touch
+      end
+    end
+
+    context 'when session expiry extension is enabled' do
+      subject(:session_model) do
+        Authie::SessionModel.create!(user: user, browser_id: browser_id, expires_at: Time.now)
+      end
+
+      before { allow(Authie.config).to receive(:extend_session_expiry_on_touch).and_return(true) }
+
+      it 'does not set the expiry time' do
+        expect(session.session).to receive(:expires_at=).and_call_original
+        session.touch
+      end
+
+      it 'extends the expiry date on the session' do
+        time = session_model.created_at
+        Timecop.freeze(time) { session.touch }
+        session.session.reload
+        expect(session.expires_at).to eq time + Authie.config.persistent_session_length
+      end
+
+      it 'updates the cookie' do
+        time = session_model.created_at
+        Timecop.freeze(time) { session.touch }
+        expect(set_cookies['user_session'][:expires]).to eq time + Authie.config.persistent_session_length
+      end
+    end
   end
 
   describe '#see_password' do

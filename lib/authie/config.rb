@@ -9,6 +9,7 @@ module Authie
     attr_accessor :sudo_session_timeout
     attr_accessor :browser_id_cookie_name
     attr_accessor :session_token_length
+    attr_accessor :extend_session_expiry_on_touch
     attr_accessor :events
 
     def initialize
@@ -17,6 +18,7 @@ module Authie
       @sudo_session_timeout = 10.minutes
       @browser_id_cookie_name = :browser_id
       @session_token_length = 64
+      @extend_session_expiry_on_touch = false
       @events = EventManager.new
     end
   end
