@@ -165,7 +165,7 @@ RSpec.describe Authie::Session do
         original_time = session_model.expires_at
         Timecop.freeze(original_time + 10.hours) { session.touch }
         session.session.reload
-        expect(session.expires_at).to eq original_time
+        expect(session.expires_at.to_i).to eq original_time.to_i
       end
 
       it 'does not set the expiry time' do
@@ -195,7 +195,7 @@ RSpec.describe Authie::Session do
         time = session_model.created_at
         Timecop.freeze(time) { session.touch }
         session.session.reload
-        expect(session.expires_at).to eq time + Authie.config.persistent_session_length
+        expect(session.expires_at.to_i).to eq (time + Authie.config.persistent_session_length).to_i
       end
 
       it 'updates the cookie' do
