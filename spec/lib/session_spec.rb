@@ -240,6 +240,16 @@ RSpec.describe Authie::Session do
       expect(Authie.config.events).to receive(:dispatch).with(:marked_as_two_factor, session)
       session.mark_as_two_factored
     end
+
+    it 'can set the skip two factor boolean to true if provided' do
+      session.mark_as_two_factored(skip: true)
+      expect(session.skip_two_factor).to eq true
+    end
+
+    it 'does not set the skip two factor boolean if not set' do
+      session.mark_as_two_factored
+      expect(session.skip_two_factor).to eq false
+    end
   end
 
   describe '#reset_token' do
