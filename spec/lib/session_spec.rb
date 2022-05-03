@@ -243,12 +243,19 @@ RSpec.describe Authie::Session do
 
     it 'can set the skip two factor boolean to true if provided' do
       session.mark_as_two_factored(skip: true)
-      expect(session.skip_two_factor).to eq true
+      expect(session.skip_two_factor?).to eq true
     end
 
-    it 'does not set the skip two factor boolean if not set' do
+    it 'can set the skip two factor boolean to false if provided' do
+      session.update!(skip_two_factor: true) # default is false, set to true to check it does actually change
+      session.mark_as_two_factored(skip: false)
+      expect(session.skip_two_factor?).to eq false
+    end
+
+    it 'does not override the two factor boolean if not provided' do
+      session.update!(skip_two_factor: true)
       session.mark_as_two_factored
-      expect(session.skip_two_factor).to eq false
+      expect(session.skip_two_factor?).to eq true
     end
   end
 

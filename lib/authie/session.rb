@@ -114,10 +114,10 @@ module Authie
     #
     # @raises [ActiveRecord::RecordInvalid]
     # @return [Authie::Session]
-    def mark_as_two_factored(skip: false)
+    def mark_as_two_factored(skip: nil)
       @session.two_factored_at = Time.now
       @session.two_factored_ip = @controller.request.ip
-      @session.skip_two_factor = skip
+      @session.skip_two_factor = skip unless skip.nil?
       @session.save!
       Authie.config.events.dispatch(:marked_as_two_factor, self)
       self
@@ -305,7 +305,7 @@ module Authie
     delegate :two_factored_at, to: :session
     delegate :two_factored_ip, to: :session
     delegate :two_factored?, to: :session
-    delegate :skip_two_factor, to: :session
+    delegate :skip_two_factor?, to: :session
     delegate :update, to: :session
     delegate :update!, to: :session
     delegate :user_agent, to: :session
