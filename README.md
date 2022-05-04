@@ -89,9 +89,9 @@ class ApplicationController < ActionController::Base
   private
 
   def login_required
-    unless logged_in?
-      redirect_to login_path, :alert => "You must login to view this resource"
-    end
+    return if logged_in?
+
+    redirect_to login_path, :alert => "You must login to view this resource"
   end
 
 end
@@ -298,3 +298,24 @@ class LoginController < ApplicationController
 
 end
 ```
+
+## Differences for Authie 4.0
+
+Authie 4.0 introduces a number of changes to the library which are worth noting when upgrading from any version less than 4.
+
+* Authie 4.0 removes the impersonation features which may make a re-appearance in a futre version.
+* Various methods on Authie::Session (more commonly known as `auth_session`) have been renamed as follows.
+  * `check_security!` is now `validate`
+  * `persist!` is now `persist`
+  * `invalidate!` is now `invalidate`
+  * `touch!` is now `touch`
+  * `set_cookie!` is now `set_cookie` and is now a private method and should not be called directly.
+  * `see_password!` is now `see_password`
+  * `mark_as_two_factored!` is now `mark_as_two_factored`
+* A new `Authie::Session#reset_token` has been added which will generate a new token for a session, save it and update the cookie.
+* When starting a session using `Authie::Session.start` or `create_auth_session` you can provide the following additional options:
+  * `persistent: true` to mark the session as persistent (i.e. give it an expiry time)
+  * `see_password: true` to set the password seen timestamp at the same time as creation
+* If the `extend_session_expiry_on_touch` config option is set to true (default is false), the expiry time for a persistent session will be extended whenver a session is touched.
+* When making a request, the session will be touched **after** the action rather than before. Previously, the `touch_auth_session` method was added before every action and it both validated the session and touched it. Now, there are two separate methods - `validate_auth_session` which is run before every action and `touch_auth_session` runs after every action. If you don't want to touch a session in a request you can either use `skip_around_filter :touch_auth-session`  or call `skip_touch_auth_session!` anywhere in the action.
+* A new config option called `session_token_length` is available which allows you to change the length of the random token used for sessions (default 64).
