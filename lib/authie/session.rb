@@ -264,6 +264,7 @@ module Authie
       end
 
       delegate :hash_token, to: SessionModel
+      delegate :cleanup, to: SessionModel
     end
 
     # Backwards compatibility with Authie < 4.0. These methods were all available on sessions
