@@ -136,13 +136,13 @@ module Authie
 
       # Cleanup any old sessions.
       def cleanup
-        Authie.config.events.dispatch(:before_cleanup)
-        # Invalidate transient sessions that haven't been used
-        active.where('expires_at IS NULL AND last_activity_at < ?',
-                     Authie.config.session_inactivity_timeout.ago).each(&:invalidate!)
-        # Invalidate persistent sessions that have expired
-        active.where('expires_at IS NOT NULL AND expires_at < ?', Time.now).each(&:invalidate!)
-        Authie.config.events.dispatch(:after_cleanup)
+        Authie.notify(:cleanup) do
+          # Invalidate transient sessions that haven't been used
+          active.where('expires_at IS NULL AND last_activity_at < ?',
+                       Authie.config.session_inactivity_timeout.ago).each(&:invalidate!)
+          # Invalidate persistent sessions that have expired
+          active.where('expires_at IS NOT NULL AND expires_at < ?', Time.now).each(&:invalidate!)
+        end
         true
       end
 

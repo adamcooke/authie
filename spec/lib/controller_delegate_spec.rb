@@ -125,7 +125,7 @@ RSpec.describe Authie::ControllerDelegate do
     end
 
     it 'dispatches an event' do
-      expect(Authie.config.events).to receive(:dispatch).with(:set_browser_id, /\A[a-f0-9-]{36}\z/)
+      expect(Authie).to receive(:notify).with(:set_browser_id, hash_including(browser_id: /\A[a-f0-9-]{36}\z/))
       delegate.set_browser_id
     end
   end

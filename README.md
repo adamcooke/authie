@@ -299,11 +299,29 @@ class LoginController < ApplicationController
 end
 ```
 
+## Instrumentation/Notification
+
+Authie will publish events to the ActiveSupport::Notification instrumentation system. The following events are published
+with the given attributes.
+
+* `set_browser_id.authie` - when a new browser ID is set for a user. Provides `:browser_id` and `:controller` arguments.
+* `cleanup.authie` - when session cleanup is run. Provides no arguments.
+* `touch.authie` - when a session is touched. Provides `:session` argument.
+* `see_password.authie` - when a session sees a password. Provides `:session` argument.
+* `mark_as_two_factor.authie` - when a session has two factor credentials provided. Provides `:session` argument.
+* `session_start.authie` - when a session is started. Provides `:session` argument.
+* `browser_id_mismatch_error.authie` - when a session is validated when the browser ID does not match. Provides `:session` argument.
+* `invalid_session_error.authie` - when a session is validated when invalid. Provides `:session` argument.
+* `expired_session_error.authie` - when a session is validated when expired. Provides `:session` argument.
+* `inactive_session_error.authie` - when a session is validated when inactive. Provides `:session` argument.
+* `host_mismatch_error.authie` - when a session is validated and the host does not match. Provides `:session` argument.
+
 ## Differences for Authie 4.0
 
 Authie 4.0 introduces a number of changes to the library which are worth noting when upgrading from any version less than 4.
 
 * Authie 4.0 removes the impersonation features which may make a re-appearance in a futre version.
+* All previous callback/events have been replaced with standard ActiveSupport instrumentation notifications.
 * Various methods on Authie::Session (more commonly known as `auth_session`) have been renamed as follows.
   * `check_security!` is now `validate`
   * `persist!` is now `persist`

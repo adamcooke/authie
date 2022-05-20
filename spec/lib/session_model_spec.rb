@@ -312,8 +312,7 @@ RSpec.describe Authie::SessionModel do
     end
 
     it 'dispatches an event before and after' do
-      expect(Authie.config.events).to receive(:dispatch).with(:before_cleanup)
-      expect(Authie.config.events).to receive(:dispatch).with(:after_cleanup)
+      expect(Authie).to receive(:notify).with(:cleanup)
       described_class.cleanup
     end
   end

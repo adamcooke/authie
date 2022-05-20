@@ -19,7 +19,7 @@ RSpec.describe Authie::Session do
 
     it 'dispatches an event if the browser ID does not match' do
       controller.send(:cookies)[:browser_id] = 'invalid'
-      expect(Authie.config.events).to receive(:dispatch).with(:browser_id_mismatch_error, session)
+      expect(Authie).to receive(:notify).with(:browser_id_mismatch_error, session: session)
       begin
         session.validate
       rescue StandardError
@@ -34,7 +34,7 @@ RSpec.describe Authie::Session do
 
     it 'dispatches an event if the session is not valid' do
       session_model.update!(active: false)
-      expect(Authie.config.events).to receive(:dispatch).with(:invalid_session_error, session)
+      expect(Authie).to receive(:notify).with(:invalid_session_error, session: session)
       begin
         session.validate
       rescue StandardError
@@ -49,7 +49,7 @@ RSpec.describe Authie::Session do
 
     it 'dispatches an event if the session has expired' do
       session_model.update!(expires_at: 5.minutes.ago)
-      expect(Authie.config.events).to receive(:dispatch).with(:expired_session_error, session)
+      expect(Authie).to receive(:notify).with(:expired_session_error, session: session)
       begin
         session.validate
       rescue StandardError
@@ -64,7 +64,7 @@ RSpec.describe Authie::Session do
 
     it 'dispatches an event if the session is inactive' do
       session_model.update!(last_activity_at: 13.hours.ago, active: true)
-      expect(Authie.config.events).to receive(:dispatch).with(:inactive_session_error, session)
+      expect(Authie).to receive(:notify).with(:inactive_session_error, session: session)
       begin
         session.validate
       rescue StandardError
@@ -150,7 +150,7 @@ RSpec.describe Authie::Session do
     end
 
     it 'dispatches an event' do
-      expect(Authie.config.events).to receive(:dispatch).with(:session_touched, session)
+      expect(Authie).to receive(:notify).with(:touch, session: session)
       session.touch
     end
 
@@ -216,7 +216,7 @@ RSpec.describe Authie::Session do
     end
 
     it 'dispatches an event' do
-      expect(Authie.config.events).to receive(:dispatch).with(:seen_password, session)
+      expect(Authie).to receive(:notify).with(:see_password, session: session)
       session.see_password
     end
   end
@@ -237,7 +237,7 @@ RSpec.describe Authie::Session do
     end
 
     it 'it dispatched an event' do
-      expect(Authie.config.events).to receive(:dispatch).with(:marked_as_two_factor, session)
+      expect(Authie).to receive(:notify).with(:mark_as_two_factor, session: session)
       session.mark_as_two_factored
     end
 
@@ -274,6 +274,19 @@ RSpec.describe Authie::Session do
 
     it 'returns itself' do
       expect(session.reset_token).to be session
+    end
+  end
+
+  describe '#start' do
+    it 'sets the cookie' do
+      expect(session).to receive(:set_cookie)
+      session.start
+    end
+
+    it 'dispatches an event' do
+      expect(Authie).to receive(:notify) # for cookies
+      expect(Authie).to receive(:notify).with(:session_start, session: session)
+      session.start
     end
   end
 

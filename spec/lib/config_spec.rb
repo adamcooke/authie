@@ -68,10 +68,4 @@ RSpec.describe Authie::Config do
       expect(config.browser_id_cookie_name).to eq :auth_browser_id
     end
   end
-
-  describe '#events' do
-    it 'returns an event manager instance' do
-      expect(config.events).to be_a Authie::EventManager
-    end
-  end
 end
