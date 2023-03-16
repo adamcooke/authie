@@ -14,7 +14,9 @@ RSpec.describe Authie::Session do
   describe '#validate' do
     it 'raises an error if the browser ID does not match' do
       controller.send(:cookies)[:browser_id] = 'invalid'
-      expect { session.validate }.to raise_error Authie::Session::BrowserMismatch
+      expect { session.validate }.to raise_error Authie::Session::BrowserMismatch do |e|
+        expect(e.session).to eq session
+      end
     end
 
     it 'dispatches an event if the browser ID does not match' do
@@ -29,7 +31,9 @@ RSpec.describe Authie::Session do
 
     it 'raises an error if the session is not valid' do
       session_model.update!(active: false)
-      expect { session.validate }.to raise_error Authie::Session::InactiveSession
+      expect { session.validate }.to raise_error Authie::Session::InactiveSession do |e|
+        expect(e.session).to eq session
+      end
     end
 
     it 'dispatches an event if the session is not valid' do
@@ -44,7 +48,9 @@ RSpec.describe Authie::Session do
 
     it 'raises an error if the session has expired' do
       session_model.update!(expires_at: 5.minutes.ago)
-      expect { session.validate }.to raise_error Authie::Session::ExpiredSession
+      expect { session.validate }.to raise_error Authie::Session::ExpiredSession do |e|
+        expect(e.session).to eq session
+      end
     end
 
     it 'dispatches an event if the session has expired' do
@@ -59,7 +65,9 @@ RSpec.describe Authie::Session do
 
     it 'raises an error if the session is inactive' do
       session_model.update!(last_activity_at: 13.hours.ago, active: true)
-      expect { session.validate }.to raise_error Authie::Session::InactiveSession
+      expect { session.validate }.to raise_error Authie::Session::InactiveSession do |e|
+        expect(e.session).to eq session
+      end
     end
 
     it 'dispatches an event if the session is inactive' do
