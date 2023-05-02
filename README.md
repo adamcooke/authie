@@ -36,7 +36,7 @@ The design goals behind Authie are:
 As usual, just pop this in your Gemfile:
 
 ```ruby
-gem 'authie', '~> 3.1'
+gem 'authie', '~> 4.0'
 ```
 
 You will then need add the database tables Authie needs to your database. You
@@ -57,18 +57,14 @@ When a user has been authenticated, you can simply set `current_user` to the use
 you wish to login. You may have a method like this in a controller.
 
 ```ruby
-class AuthenticationController < ApplicationController
+class SessionsController < ApplicationController
 
-  skip_before_action :login_required
-
-  def login
-    if request.post?
-      if user = User.authenticate(params[:username], params[:password])
-        create_auth_session(user)
-        redirect_to root_path
-      else
-        flash.now[:alert] = "Username/password was invalid"
-      end
+  def create
+    if user = User.authenticate(params[:username], params[:password])
+      create_auth_session(user)
+      redirect_to root_path
+    else
+      flash.now[:alert] = "Username/password was invalid"
     end
   end
 
@@ -208,9 +204,8 @@ their password. The `invalidate_others!` method can be called on any
 
 ```ruby
 def change_password
-  if @user.change_password(params[:new_password])
-    auth_session.invalidate_others!
-  end
+  @user.change_password(params[:new_password])
+  auth_session.invalidate_others!
 end
 ```
 
@@ -226,8 +221,7 @@ password in a session and whether you need to prompt them before continuing.
 # that we have just seen their password.
 def login
   if user = User.authenticate(params[:username], params[:password])
-    create_auth_session(user)
-    auth_session.see_password
+    create_auth_session(user, see_password: true)
     redirect_to root_path
   end
 end
@@ -273,7 +267,6 @@ class ApplicationController < ActionController::Base
       # If the user has two factor auth enabled, and we haven't already checked it
       # in this auth session, redirect the user to an action which prompts the user
       # to do their two factor auth check.
-      flash[:two_factor_return_path] = request.fullpath
       redirect_to two_factor_auth_path
     end
   end
@@ -292,7 +285,7 @@ class LoginController < ApplicationController
   def two_factor_auth
     if user.verify_two_factor_token(params[:token])
       auth_session.mark_as_two_factored
-      redirect_to flash[:two_factor_return_path] || root_path, :notice => "Logged in successfully!"
+      redirect_to root_path, :notice => "Logged in successfully!"
     end
   end
 
