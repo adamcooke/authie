@@ -145,7 +145,6 @@ module Authie
 
     private
 
-    # rubocop:disable Naming/AccessorMethodName
     def set_cookie(value = @session.temporary_token)
       cookies[:user_session] = {
         value: value,
@@ -156,7 +155,6 @@ module Authie
       Authie.notify(:cookie_updated, session: session)
       true
     end
-    # rubocop:enable Naming/AccessorMethodName
 
     def cookies
       @controller.send(:cookies)
