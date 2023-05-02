@@ -162,8 +162,8 @@ module Authie
 
     def validate_browser_id
       if cookies[:browser_id] != @session.browser_id
-        invalidate
         Authie.notify(:browser_id_mismatch_error, session: self)
+        invalidate
         raise BrowserMismatch, 'Browser ID mismatch'
       end
 

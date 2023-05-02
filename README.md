@@ -304,17 +304,18 @@ end
 Authie will publish events to the ActiveSupport::Notification instrumentation system. The following events are published
 with the given attributes.
 
-* `set_browser_id.authie` - when a new browser ID is set for a user. Provides `:browser_id` and `:controller` arguments.
-* `cleanup.authie` - when session cleanup is run. Provides no arguments.
-* `touch.authie` - when a session is touched. Provides `:session` argument.
-* `see_password.authie` - when a session sees a password. Provides `:session` argument.
-* `mark_as_two_factor.authie` - when a session has two factor credentials provided. Provides `:session` argument.
-* `session_start.authie` - when a session is started. Provides `:session` argument.
-* `browser_id_mismatch_error.authie` - when a session is validated when the browser ID does not match. Provides `:session` argument.
-* `invalid_session_error.authie` - when a session is validated when invalid. Provides `:session` argument.
-* `expired_session_error.authie` - when a session is validated when expired. Provides `:session` argument.
-* `inactive_session_error.authie` - when a session is validated when inactive. Provides `:session` argument.
-* `host_mismatch_error.authie` - when a session is validated and the host does not match. Provides `:session` argument.
+- `set_browser_id.authie` - when a new browser ID is set for a user. Provides `:browser_id` and `:controller` arguments.
+- `cleanup.authie` - when session cleanup is run. Provides no arguments.
+- `touch.authie` - when a session is touched. Provides `:session` argument.
+- `see_password.authie` - when a session sees a password. Provides `:session` argument.
+- `mark_as_two_factor.authie` - when a session has two factor credentials provided. Provides `:session` argument.
+- `session_start.authie` - when a session is started. Provides `:session` argument.
+- `session_invalidate.authie` - when a session is intentionally invalidated. Provides `:session` argument with session model instance.
+- `browser_id_mismatch_error.authie` - when a session is validated when the browser ID does not match. Provides `:session` argument.
+- `invalid_session_error.authie` - when a session is validated when invalid. Provides `:session` argument.
+- `expired_session_error.authie` - when a session is validated when expired. Provides `:session` argument.
+- `inactive_session_error.authie` - when a session is validated when inactive. Provides `:session` argument.
+- `host_mismatch_error.authie` - when a session is validated and the host does not match. Provides `:session` argument.
 
 ## Differences for Authie 4.0
 

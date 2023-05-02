@@ -19,12 +19,13 @@ RSpec.describe Authie::Session do
 
     it 'dispatches an event if the browser ID does not match' do
       controller.send(:cookies)[:browser_id] = 'invalid'
-      expect(Authie).to receive(:notify).with(:browser_id_mismatch_error, session: session)
+      allow(Authie).to receive(:notify)
       begin
         session.validate
       rescue StandardError
         nil
       end
+      expect(Authie).to have_received(:notify).with(:browser_id_mismatch_error, session: session)
     end
 
     it 'raises an error if the session is not valid' do
@@ -34,12 +35,13 @@ RSpec.describe Authie::Session do
 
     it 'dispatches an event if the session is not valid' do
       session_model.update!(active: false)
-      expect(Authie).to receive(:notify).with(:invalid_session_error, session: session)
+      allow(Authie).to receive(:notify)
       begin
         session.validate
       rescue StandardError
         nil
       end
+      expect(Authie).to have_received(:notify).with(:invalid_session_error, session: session)
     end
 
     it 'raises an error if the session has expired' do
@@ -49,12 +51,13 @@ RSpec.describe Authie::Session do
 
     it 'dispatches an event if the session has expired' do
       session_model.update!(expires_at: 5.minutes.ago)
-      expect(Authie).to receive(:notify).with(:expired_session_error, session: session)
+      allow(Authie).to receive(:notify)
       begin
         session.validate
       rescue StandardError
         nil
       end
+      expect(Authie).to have_received(:notify).with(:expired_session_error, session: session)
     end
 
     it 'raises an error if the session is inactive' do
@@ -64,12 +67,13 @@ RSpec.describe Authie::Session do
 
     it 'dispatches an event if the session is inactive' do
       session_model.update!(last_activity_at: 13.hours.ago, active: true)
-      expect(Authie).to receive(:notify).with(:inactive_session_error, session: session)
+      allow(Authie).to receive(:notify)
       begin
         session.validate
       rescue StandardError
         nil
       end
+      expect(Authie).to have_received(:notify).with(:inactive_session_error, session: session)
     end
 
     it 'raises an error if the hostname does not match the session' do

@@ -63,8 +63,10 @@ module Authie
     end
 
     def invalidate!
+      active_now = active?
       self.active = false
       save!
+      Authie.notify(:session_invalidate, session: self) if active_now
       true
     end
 

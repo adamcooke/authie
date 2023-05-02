@@ -139,6 +139,17 @@ RSpec.describe Authie::SessionModel do
       session_model.invalidate!
       expect(session_model.active).to be false
     end
+
+    it 'sends a notification' do
+      expect(Authie).to receive(:notify).with(:session_invalidate, session: session_model)
+      session_model.invalidate!
+    end
+
+    it 'does not send a notification if called on a session that is already not active' do
+      session_model.active = false
+      expect(Authie).to_not receive(:notify)
+      session_model.invalidate!
+    end
   end
 
   context '#set' do
