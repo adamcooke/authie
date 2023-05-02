@@ -1,6 +1,20 @@
 name: CI
 on: push
 jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    outputs:
+      release_created: ${{ steps.release-please.outputs.release_created }}
+      tag_name: ${{ steps.release-please.outputs.tag_name }} # e.g. v1.0.0
+      version: ${{ steps.release-please.outputs.version }} # e.g. 1.0.0
+      all: ${{ toJSON(steps.release-please.outputs) }}
+    steps:
+      - uses: google-github-actions/release-please-action@v3
+        id: release-please
+        with:
+          command: manifest
+
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -71,8 +85,8 @@ jobs:
 
   release:
     runs-on: ubuntu-latest
-    needs: [lint, test]
-    if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
+    needs: [test, release-please]
+    if: needs.release-please.outputs.release_created
     steps:
       - uses: actions/checkout@master
 
@@ -82,7 +96,7 @@ jobs:
           ruby-version: 3.1
 
       - name: Export version from tag name
-        run: echo ${GITHUB_REF/refs\/tags\//} > VERSION
+        run: echo ${{ needs.release-please.outputs.version }} > VERSION
 
       - name: Build Gem
         run: gem build *.gemspec

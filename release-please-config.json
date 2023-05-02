@@ -1,0 +1,14 @@
+{
+  "bootstrap-sha": "23c79175d75dc85cf0b059d9b33d8da8928e0384",
+  "packages": {
+    ".": {
+      "release-type": "ruby",
+      "changelog-path": "CHANGELOG.md",
+      "bump-minor-pre-major": true,
+      "bump-patch-for-minor-pre-major": true,
+      "draft": false,
+      "prerelease": false
+    }
+  },
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json"
+}
