@@ -81,7 +81,7 @@ module Authie
     end
 
     def invalidate_others!
-      self.class.where('id != ?', id).for_user(user).each(&:invalidate!)
+      self.class.where('id != ?', id).active.for_user(user).each(&:invalidate!)
     end
 
     # Have we seen the user's password recently in this sesion?

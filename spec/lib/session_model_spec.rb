@@ -201,6 +201,12 @@ RSpec.describe Authie::SessionModel do
       expect(session_model.active?).to be true
     end
 
+    it 'does not invalidate sessions that are not active' do
+      described_class.create!(active: false, user: user)
+      sessions = session_model.invalidate_others!
+      expect(sessions).to eq [@other_session1, @other_session2]
+    end
+
     it 'does not mark sessions for other users as inactive' do
       other_user_session = described_class.create!(active: true, user: User.create!(username: 'bob'))
       session_model.invalidate_others!
