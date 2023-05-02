@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AddIndexesToAuthieSessions < ActiveRecord::Migration[4.2]
+class AddIndexesToAuthieSessions < ActiveRecord::Migration[6.1]
   def change
     add_column :authie_sessions, :user_type, :string
     add_index :authie_sessions, :token, length: 10

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreateAuthieSessions < ActiveRecord::Migration[4.2]
+class CreateAuthieSessions < ActiveRecord::Migration[6.1]
   def change
     create_table :authie_sessions do |t|
       t.string :token, :browser_id
