@@ -13,7 +13,14 @@ module Authie
     attr_reader :session
 
     # A parent class that encapsulates all session validity errors.
-    class ValidityError < Error; end
+    class ValidityError < Error
+      attr_reader :session
+
+      def initialize(message, session = nil)
+        super(message)
+        @session = session
+      end
+    end
 
     # Raised when a session is used but it is no longer active
     class InactiveSession < ValidityError; end
@@ -164,7 +171,7 @@ module Authie
       if cookies[:browser_id] != @session.browser_id
         Authie.notify(:browser_id_mismatch_error, session: self)
         invalidate
-        raise BrowserMismatch, 'Browser ID mismatch'
+        raise BrowserMismatch.new('Browser ID mismatch', self)
       end
 
       self
@@ -174,7 +181,7 @@ module Authie
       unless @session.active?
         invalidate
         Authie.notify(:invalid_session_error, session: self)
-        raise InactiveSession, 'Session is no longer active'
+        raise InactiveSession.new('Session is no longer active', self)
       end
 
       self
@@ -184,7 +191,7 @@ module Authie
       if @session.expired?
         invalidate
         Authie.notify(:expired_session_error, session: self)
-        raise ExpiredSession, 'Persistent session has expired'
+        raise ExpiredSession.new('Persistent session has expired', self)
       end
 
       self
@@ -193,8 +200,8 @@ module Authie
     def validate_inactivity
       if @session.inactive?
         invalidate
-        Authie.notify(:inactive_session_error, session:  self)
-        raise InactiveSession, 'Non-persistent session has expired'
+        Authie.notify(:inactive_session_error, session: self)
+        raise InactiveSession.new('Non-persistent session has expired', self)
       end
 
       self
@@ -204,7 +211,8 @@ module Authie
       if @session.host && @session.host != @controller.request.host
         invalidate
         Authie.notify(:host_mismatch_error, session: self)
-        raise HostMismatch, "Session was created on #{@session.host} but accessed using #{@controller.request.host}"
+        raise HostMismatch.new("Session was created on #{@session.host} but accessed using #{@controller.request.host}",
+                               self)
       end
 
       self
