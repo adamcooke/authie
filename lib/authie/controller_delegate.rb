@@ -46,9 +46,9 @@ module Authie
     #
     # @return [Authie::Session, false]
     def validate_auth_session
-      return auth_session.validate if logged_in?
+      return false unless logged_in?
 
-      false
+      auth_session.validate
     end
 
     # Touch the session to update details on the latest activity.
@@ -74,13 +74,12 @@ module Authie
     #
     # @return [Authie::Session, nil]
     def create_auth_session(user, **kwargs)
-      if user
-        @auth_session = Authie::Session.start(@controller, user: user, **kwargs)
-        return @auth_session
+      if user.nil?
+        invalidate_auth_session
+        return nil
       end
 
-      invalidate_auth_session
-      nil
+      @auth_session = Authie::Session.start(@controller, user: user, **kwargs)
     end
 
     # Invalidate the existing auth session if one exists. Return true if a sesion has been invalidated
@@ -88,13 +87,11 @@ module Authie
     #
     # @return [Boolean]
     def invalidate_auth_session
-      if logged_in?
-        auth_session.invalidate
-        @auth_session = nil
-        return true
-      end
+      return false unless logged_in?
 
-      false
+      auth_session.invalidate
+      @auth_session = nil
+      true
     end
 
     # Is anyone currently logged in? Return true if there is an auth session present.
