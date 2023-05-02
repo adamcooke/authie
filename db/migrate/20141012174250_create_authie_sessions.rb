@@ -4,7 +4,7 @@ class CreateAuthieSessions < ActiveRecord::Migration[6.1]
   def change
     create_table :authie_sessions do |t|
       t.string :token, :browser_id
-      t.integer :user_id
+      t.bigint :user_id
       t.boolean :active, default: true
       t.text :data
       t.datetime :expires_at
