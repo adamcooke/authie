@@ -6,7 +6,8 @@ module Authie
   module ControllerExtension
     class << self
       def included(base)
-        base.helper_method :logged_in?, :current_user, :auth_session
+        base.helper_method :logged_in?, :current_user, :auth_session if base.respond_to?(:helper_method)
+
         base.before_action :set_browser_id, :validate_auth_session
         base.around_action :touch_auth_session
 
