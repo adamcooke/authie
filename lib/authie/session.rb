@@ -79,7 +79,7 @@ module Authie
     # @return [Authie::Session]
     def invalidate
       @session.invalidate!
-      cookies.delete(:user_session)
+      cookies.delete(Authie.config.session_cookie_name)
       self
     end
 
@@ -153,7 +153,7 @@ module Authie
     private
 
     def set_cookie(value = @session.temporary_token)
-      cookies[:user_session] = {
+      cookies[Authie.config.session_cookie_name] = {
         value: value,
         secure: @controller.request.ssl?,
         httponly: true,
@@ -260,12 +260,12 @@ module Authie
       # @return [Authie::Session]
       def get_session(controller)
         cookies = controller.send(:cookies)
-        return nil if cookies[:user_session].blank?
+        return nil if cookies[Authie.config.session_cookie_name].blank?
 
-        session = SessionModel.find_session_by_token(cookies[:user_session])
+        session = SessionModel.find_session_by_token(cookies[Authie.config.session_cookie_name])
         return nil if session.blank?
 
-        session.temporary_token = cookies[:user_session]
+        session.temporary_token = cookies[Authie.config.session_cookie_name]
         new(controller, session)
       end
 

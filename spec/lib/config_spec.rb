@@ -68,4 +68,15 @@ RSpec.describe Authie::Config do
       expect(config.browser_id_cookie_name).to eq :auth_browser_id
     end
   end
+
+  describe '#session_cookie_name' do
+    it 'returns the default value' do
+      expect(config.session_cookie_name).to eq :user_session
+    end
+
+    it 'returns an overriden value' do
+      config.session_cookie_name = :auth_user_session
+      expect(config.session_cookie_name).to eq :auth_user_session
+    end
+  end
 end

@@ -280,10 +280,10 @@ RSpec.describe Authie::Session do
     end
 
     it 'updates the cookie' do
-      original_cookie_value = controller.send(:cookies)[:user_session]
+      original_cookie_value = controller.send(:cookies)[Authie.config.session_cookie_name]
       session.reset_token
-      expect(controller.send(:cookies)[:user_session]).to_not eq original_cookie_value
-      expect(controller.send(:cookies)[:user_session]).to eq session.temporary_token
+      expect(controller.send(:cookies)[Authie.config.session_cookie_name]).to_not eq original_cookie_value
+      expect(controller.send(:cookies)[Authie.config.session_cookie_name]).to eq session.temporary_token
     end
 
     it 'returns itself' do
@@ -350,18 +350,18 @@ RSpec.describe Authie::Session do
     end
 
     it 'returns nil if there is no session matching the value in the cookie' do
-      controller.send(:cookies)[:user_session] = 'invalid'
+      controller.send(:cookies)[Authie.config.session_cookie_name] = 'invalid'
       expect(described_class.get_session(controller)).to be nil
     end
 
     it 'returns a session object if a session is found' do
-      controller.send(:cookies)[:user_session] = session_model.temporary_token
+      controller.send(:cookies)[Authie.config.session_cookie_name] = session_model.temporary_token
       expect(described_class.get_session(controller)).to be_a Authie::Session
       expect(described_class.get_session(controller).session).to eq session_model
     end
 
     it 'sets the temporary token on the underlying session' do
-      controller.send(:cookies)[:user_session] = session_model.temporary_token
+      controller.send(:cookies)[Authie.config.session_cookie_name] = session_model.temporary_token
       expect(described_class.get_session(controller).session.temporary_token).to eq session_model.temporary_token
     end
   end

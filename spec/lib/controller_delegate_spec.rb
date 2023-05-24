@@ -149,7 +149,7 @@ RSpec.describe Authie::ControllerDelegate do
         session = delegate.create_auth_session(user)
         expect(session).to be_a Authie::Session
         expect(session.user).to eq user
-        expect(controller.send(:cookies)[:user_session]).to eq session.temporary_token
+        expect(controller.send(:cookies)[Authie.config.session_cookie_name]).to eq session.temporary_token
       end
 
       it 'can receive other options for the session too' do

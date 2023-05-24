@@ -87,7 +87,7 @@ RSpec.describe PagesController, type: :controller do
       session.save!
     end
     cookies[:browser_id] = browser_id
-    cookies[:user_session] = session.temporary_token
+    cookies[Authie.config.session_cookie_name] = session.temporary_token
     session
   end
 end
