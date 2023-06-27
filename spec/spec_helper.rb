@@ -27,9 +27,9 @@ ActiveRecord::Base.establish_connection adapter: 'sqlite3', database: ':memory:'
 ActiveRecord::Migration.verbose = false
 RSpec::Mocks.configuration.allow_message_expectations_on_nil = true
 
-require_relative './dummy/config/environment'
-require_relative './support/controller_helpers'
-require_relative './support/user_model'
+require_relative 'dummy/config/environment'
+require_relative 'support/controller_helpers'
+require_relative 'support/user_model'
 
 require 'rspec/rails'
 
