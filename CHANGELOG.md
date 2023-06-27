@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.1.0](https://github.com/adamcooke/authie/compare/v4.0.0...v4.1.0) (2023-06-27)
+
+
+### Features
+
+* support for storing ip address countries ([90b2394](https://github.com/adamcooke/authie/commit/90b2394c7080feb9b355de0dec4e46e6683c64a2))
+
 ## [4.0.0](https://github.com/adamcooke/authie/compare/v3.4.0...v4.0.0) (2023-05-02)
 
 
