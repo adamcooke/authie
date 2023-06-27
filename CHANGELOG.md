@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.1.1](https://github.com/adamcooke/authie/compare/v4.1.0...v4.1.1) (2023-06-27)
+
+
+### Bug Fixes
+
+* expose Config#lookup_ip_country_backend ([8473337](https://github.com/adamcooke/authie/commit/8473337fce552cb4d1ae5788e304347b2266b3d9))
+
 ## [4.1.0](https://github.com/adamcooke/authie/compare/v4.0.0...v4.1.0) (2023-06-27)
 
 
