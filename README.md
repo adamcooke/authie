@@ -292,6 +292,16 @@ class LoginController < ApplicationController
 end
 ```
 
+## Storing IP address countries
+
+Authie has support for storing the country that an IP address is located in whenever they are saved to the database. To use this, you need to specify a backend to use in the Authie configuration. The backend should respond to `#call(ip_address)`.
+
+```ruby
+Authie.config.lookup_ip_country_backend = proc do |ip_address|
+  SomeService.lookup_country_from_ip(ip_address)
+end
+```
+
 ## Instrumentation/Notification
 
 Authie will publish events to the ActiveSupport::Notification instrumentation system. The following events are published

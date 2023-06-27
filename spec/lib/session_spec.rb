@@ -142,6 +142,21 @@ RSpec.describe Authie::Session do
       expect(session.last_activity_ip).to eq '1.2.3.4'
     end
 
+    it 'sets the last activity IP country' do
+      allow(controller.request).to receive(:ip).and_return('1.2.3.4')
+      allow(Authie.config).to receive(:lookup_ip_country).with('1.2.3.4').and_return('FR')
+      session.touch
+      expect(session.last_activity_ip_country).to eq 'FR'
+    end
+
+    it 'does not lookup an IP if the last activity IP does not change' do
+      allow(controller.request).to receive(:ip).and_return('1.2.3.4')
+      session.update!(last_activity_ip: '1.2.3.4', last_activity_ip_country: 'FR')
+      expect(Authie.config).to_not receive(:lookup_ip_country)
+      session.touch
+      expect(session.last_activity_ip_country).to eq 'FR'
+    end
+
     it 'sets the last activity path' do
       allow(controller.request).to receive(:path).and_return('/blah/blah')
       session.touch
@@ -250,6 +265,13 @@ RSpec.describe Authie::Session do
       expect(session.two_factored_ip).to eq '1.2.3.4'
     end
 
+    it 'sets the ip address country' do
+      allow(controller.request).to receive(:ip).and_return('1.2.3.4')
+      allow(Authie.config).to receive(:lookup_ip_country).with('1.2.3.4').and_return('AU')
+      session.mark_as_two_factored
+      expect(session.two_factored_ip_country).to eq 'AU'
+    end
+
     it 'it dispatched an event' do
       expect(Authie).to receive(:notify).with(:mark_as_two_factor, session: session)
       session.mark_as_two_factored
@@ -318,6 +340,14 @@ RSpec.describe Authie::Session do
         expect(session.session.host).to eq 'test.host'
         expect(session.session.user_agent).to eq 'Rails Testing'
       end
+    end
+
+    it 'adds the login IP coutnry' do
+      allow(Authie.config).to receive(:lookup_ip_country).with('1.2.3.4').and_return('GB')
+      allow(controller.request).to receive(:ip).and_return('1.2.3.4')
+      session = described_class.start(controller, user: user)
+      expect(session).to be_a Authie::Session
+      expect(session.session.login_ip_country).to eq 'GB'
     end
 
     it 'invalidates all other sessions for the same browser' do

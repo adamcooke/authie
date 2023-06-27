@@ -8,6 +8,7 @@ module Authie
     attr_accessor :browser_id_cookie_name
     attr_accessor :session_token_length
     attr_accessor :extend_session_expiry_on_touch
+    attr_accessor :ip_lookup
 
     def initialize
       @session_inactivity_timeout = 12.hours
@@ -16,6 +17,13 @@ module Authie
       @browser_id_cookie_name = :browser_id
       @session_token_length = 64
       @extend_session_expiry_on_touch = false
+      @lookup_ip_country_backend = nil
+    end
+
+    def lookup_ip_country(ip)
+      return nil if @lookup_ip_country_backend.nil?
+
+      @lookup_ip_country_backend.call(ip)
     end
   end
 

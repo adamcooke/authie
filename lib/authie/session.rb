@@ -96,7 +96,11 @@ module Authie
     # @return [Authie::Session]
     def touch
       @session.last_activity_at = Time.now
+      if @controller.request.ip != @session.last_activity_ip
+        @session.last_activity_ip_country = Authie.config.lookup_ip_country(@controller.request.ip)
+      end
       @session.last_activity_ip = @controller.request.ip
+
       @session.last_activity_path = @controller.request.path
       @session.requests += 1
       extend_session_expiry_if_appropriate
@@ -124,6 +128,7 @@ module Authie
     def mark_as_two_factored(skip: nil)
       @session.two_factored_at = Time.now
       @session.two_factored_ip = @controller.request.ip
+      @session.two_factored_ip_country = Authie.config.lookup_ip_country(@controller.request.ip)
       @session.skip_two_factor = skip unless skip.nil?
       @session.save!
       Authie.notify(:mark_as_two_factor, session: self)
@@ -244,6 +249,7 @@ module Authie
         session.browser_id = cookies[:browser_id]
         session.login_at = Time.now
         session.login_ip = controller.request.ip
+        session.login_ip_country = Authie.config.lookup_ip_country(session.login_ip)
         session.host = controller.request.host
         session.user_agent = controller.request.user_agent
         session.expires_at = Time.now + Authie.config.persistent_session_length if persistent
@@ -298,9 +304,11 @@ module Authie
     delegate :invalidate_others!, to: :session
     delegate :last_activity_at, to: :session
     delegate :last_activity_ip, to: :session
+    delegate :last_activity_ip_country, to: :session
     delegate :last_activity_path, to: :session
     delegate :login_at, to: :session
     delegate :login_ip, to: :session
+    delegate :login_ip_country, to: :session
     delegate :password_seen_at, to: :session
     delegate :persisted?, to: :session
     delegate :persistent?, to: :session
@@ -311,6 +319,7 @@ module Authie
     delegate :token_hash, to: :session
     delegate :two_factored_at, to: :session
     delegate :two_factored_ip, to: :session
+    delegate :two_factored_ip_country, to: :session
     delegate :two_factored?, to: :session
     delegate :skip_two_factor?, to: :session
     delegate :update, to: :session
