@@ -326,6 +326,7 @@ Authie 4.0 introduces a number of changes to the library which are worth noting 
 
 - Authie 4.0 removes the impersonation features which may make a re-appearance in a futre version.
 - All previous callback/events have been replaced with standard ActiveSupport instrumentation notifications.
+- `Authie::SessionModel` has been introduced to represent the instance of the underlying database record.
 - Various methods on Authie::Session (more commonly known as `auth_session`) have been renamed as follows.
   - `check_security!` is now `validate`
   - `persist!` is now `persist`
