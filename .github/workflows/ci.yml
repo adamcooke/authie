@@ -36,7 +36,6 @@ jobs:
       fail-fast: false
       matrix:
         ruby_version:
-          - 2.6
           - 2.7
           - "3.0"
           - 3.1
@@ -44,9 +43,7 @@ jobs:
         gemfile:
           - rails_6.1
           - rails_7.0
-        exclude:
-          - ruby_version: 2.6
-            gemfile: rails_7.0
+          - rails_7.1
     env:
       BUNDLE_GEMFILE: ${{ github.workspace }}/gemfiles/${{ matrix.gemfile }}.gemfile
     steps:
