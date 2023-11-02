@@ -3,7 +3,7 @@
 source "https://rubygems.org"
 
 gem "appraisal", "2.4.1"
-gem "rails", "6.1.5.1"
+gem "rails", "6.1.7.6"
 gem "rspec"
 gem "rspec-core"
 gem "rspec-expectations"
