@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.1.2](https://github.com/adamcooke/authie/compare/v4.1.1...v4.1.2) (2023-11-02)
+
+
+### Bug Fixes
+
+* don't provide Schema::Migration in Rails &gt;= 7.0 ([57f2857](https://github.com/adamcooke/authie/commit/57f2857ba9c38bbc2078ca45be6ca13c55ed9373))
+* specify type of object for serialise data attribute ([48263f8](https://github.com/adamcooke/authie/commit/48263f84bae4a3e00ca67c878019503e83b09e34))
+
 ## [4.1.1](https://github.com/adamcooke/authie/compare/v4.1.0...v4.1.1) (2023-06-27)
 
 
