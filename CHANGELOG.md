@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.1.3](https://github.com/adamcooke/authie/compare/v4.1.2...v4.1.3) (2023-11-02)
+
+
+### Bug Fixes
+
+* fix dependency constraints ([0268de8](https://github.com/adamcooke/authie/commit/0268de87c02acd3ab0a1c01b70ed8153cb11d075))
+
 ## [4.1.2](https://github.com/adamcooke/authie/compare/v4.1.1...v4.1.2) (2023-11-02)
 
 
