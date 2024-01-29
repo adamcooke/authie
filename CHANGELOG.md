@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.1.4](https://github.com/adamcooke/authie/compare/v4.1.3...v4.1.4) (2024-01-29)
+
+
+### Bug Fixes
+
+* fixes RackController session lookup ([#40](https://github.com/adamcooke/authie/issues/40)) ([89395b4](https://github.com/adamcooke/authie/commit/89395b4e23d33193b3ca4a30c3ed0bb19fd533f3))
+
 ## [4.1.3](https://github.com/adamcooke/authie/compare/v4.1.2...v4.1.3) (2023-11-02)
 
 
