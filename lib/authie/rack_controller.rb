@@ -27,7 +27,7 @@ module Authie
     def set_browser_id
       until cookies[:browser_id]
         proposed_browser_id = SecureRandom.uuid
-        unless Session.where(browser_id: proposed_browser_id).exists?
+        unless SessionModel.where(browser_id: proposed_browser_id).exists?
           cookies[:browser_id] = { value: proposed_browser_id, expires: 20.years.from_now }
         end
       end
