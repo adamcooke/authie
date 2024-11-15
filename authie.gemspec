@@ -15,6 +15,6 @@ Gem::Specification.new do |s|
   s.authors       = ['Adam Cooke']
   s.email         = ['me@adamcooke.io']
 
-  s.add_dependency 'activerecord', '>= 6.1', '< 8.0'
+  s.add_dependency 'activerecord', '>= 6.1', '< 9.0'
 end
 # rubocop:enable Gemspec/RequireMFA

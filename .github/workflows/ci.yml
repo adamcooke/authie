@@ -44,6 +44,7 @@ jobs:
           - rails_6.1
           - rails_7.0
           - rails_7.1
+          - rails_8.0
     env:
       BUNDLE_GEMFILE: ${{ github.workspace }}/gemfiles/${{ matrix.gemfile }}.gemfile
     steps:
