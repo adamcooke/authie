@@ -1,5 +1,20 @@
 # Changelog
 
+## [4.1.5](https://github.com/adamcooke/authie/compare/v4.1.4...v4.1.5) (2025-02-04)
+
+
+### Miscellaneous Chores
+
+* add additional changelog sections to release please ([e6c763d](https://github.com/adamcooke/authie/commit/e6c763d1acb4f33ae2a988952329c815d5bb6d0c))
+* exclude 3.1/8.0 and 3.4/7.0 ([8456d8d](https://github.com/adamcooke/authie/commit/8456d8ded1accbda3d8bad838ec20bf09af42eb2))
+* unpin sqlite ([74043d6](https://github.com/adamcooke/authie/commit/74043d68a8d8aa6ce397255c84f7592be03b27a0))
+* update ci to include rails 8 and ruby 3.3/3.4 ([1326f9e](https://github.com/adamcooke/authie/commit/1326f9e49b9edf050a24046b732907f56d1a893a))
+
+
+### Tests
+
+* require 'logger' in tests ([e1f55d3](https://github.com/adamcooke/authie/commit/e1f55d31315137b87ed2473deeb307ff1acee963))
+
 ## [4.1.4](https://github.com/adamcooke/authie/compare/v4.1.3...v4.1.4) (2024-01-29)
 
 
