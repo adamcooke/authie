@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.1.6](https://github.com/adamcooke/authie/compare/v4.1.5...v4.1.6) (2025-02-04)
+
+
+### Miscellaneous Chores
+
+* update action dependencies for release ([c070a1e](https://github.com/adamcooke/authie/commit/c070a1e3a197c04dff8631839f4430596e8ab581))
+
 ## [4.1.5](https://github.com/adamcooke/authie/compare/v4.1.4...v4.1.5) (2025-02-04)
 
 
