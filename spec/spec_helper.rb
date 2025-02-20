@@ -48,12 +48,8 @@ RSpec.configure do |config|
   end
 
   config.before(:suite) do
-    context = if Gem::Version.new(Rails.version) >= Gem::Version.new('7.0')
-                ActiveRecord::MigrationContext.new(File.expand_path('../db/migrate', __dir__))
-              else
-                ActiveRecord::MigrationContext.new(File.expand_path('../db/migrate', __dir__),
-                                                   ActiveRecord::SchemaMigration)
-              end
+    context = ActiveRecord::MigrationContext.new(File.expand_path('../db/migrate', __dir__),
+                                                 ActiveRecord::SchemaMigration)
     context.migrate(nil)
   end
 
