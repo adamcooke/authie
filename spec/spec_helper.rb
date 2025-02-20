@@ -48,8 +48,7 @@ RSpec.configure do |config|
   end
 
   config.before(:suite) do
-    context = ActiveRecord::MigrationContext.new(File.expand_path('../db/migrate', __dir__),
-                                                 ActiveRecord::SchemaMigration)
+    context = ActiveRecord::MigrationContext.new(File.expand_path('../db/migrate', __dir__))
     context.migrate(nil)
   end
 
