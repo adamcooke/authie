@@ -1,5 +1,27 @@
 # Changelog
 
+## [5.0.0](https://github.com/adamcooke/authie/compare/v4.1.6...v5.0.0) (2025-02-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* Authie no longer supports Rails <= 7.0. Official support for Rails 7.0 ended over a year ago, we don't need to continue supporting it in Authie 5.0 and higher. Rails 7.0 can continue to use the 4.x releases.
+* If a coder was set using `config.active_record.default_column_serializer` then it will no longer be respected. You will need to set `Authie.config.serialize_coder` to override the coder for Authie sessions.
+
+### Features
+
+* allow data serialization encoder to be defined using `Authie.config.serialize_coder`. ([588b5e7](https://github.com/adamcooke/authie/commit/588b5e7b0cc0e03fa3282b4fc088a18b866b0932))
+
+
+### Miscellaneous Chores
+
+* remove support for Rails 7.0 ([1b09a80](https://github.com/adamcooke/authie/commit/1b09a80efaf1525a4079abf793bdfb93d9246917))
+
+
+### Tests
+
+* use the &gt;= 7.0 migration context ([7daabf1](https://github.com/adamcooke/authie/commit/7daabf1aff3cf06fec544f6b6e6f8fb9f7f55f6d))
+
 ## [4.1.6](https://github.com/adamcooke/authie/compare/v4.1.5...v4.1.6) (2025-02-04)
 
 
