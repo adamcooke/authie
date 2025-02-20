@@ -17,7 +17,7 @@ module Authie
     scope :for_user, ->(user) { where(user_type: user.class.name, user_id: user.id) }
 
     # Attributes
-    serialize :data, type: Hash
+    serialize :data, type: Hash, coder: Authie.config.serialize_coder
 
     before_validation :shorten_strings
     before_create :set_new_token

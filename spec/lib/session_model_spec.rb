@@ -162,6 +162,22 @@ RSpec.describe Authie::SessionModel do
       session_model.set(:hello, 'world')
       expect(session_model.data['hello']).to eq 'world'
     end
+
+    it 'stores values as YAML in the data column' do
+      session_model.set(:hello, 'world')
+      expect(session_model.read_attribute_before_type_cast('data')).to eq "---\nhello: world\n"
+    end
+
+    it 'stores values as JSON if configured to do so' do
+      Authie.config.serialize_coder = JSON
+      # Reload the class because the model was already loaded
+      load File.expand_path('../../lib/authie/session_model.rb', __dir__)
+      session_model.set(:hello, 'world')
+      expect(session_model.read_attribute_before_type_cast('data')).to eq '{"hello":"world"}'
+    ensure
+      Authie.config.serialize_coder = nil
+      load File.expand_path('../../lib/authie/session_model.rb', __dir__)
+    end
   end
 
   context '#get' do

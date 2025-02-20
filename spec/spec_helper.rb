@@ -56,4 +56,8 @@ RSpec.configure do |config|
               end
     context.migrate(nil)
   end
+
+  config.before(:each) do
+    Authie.config.set_defaults
+  end
 end
