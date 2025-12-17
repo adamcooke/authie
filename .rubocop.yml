@@ -28,3 +28,12 @@ Gemspec/RequiredRubyVersion:
 
 Metrics/BlockLength:
   Enabled: false
+
+# Disable predicate method enforcement for files where it produces false
+# positives. It's use of boolean return values alone to determine if a method
+# is a predicate method is not reliable enough.
+Naming/PredicateMethod:
+  Exclude:
+    - "lib/authie/controller_delegate.rb"
+    - "lib/authie/session.rb"
+    - "lib/authie/session_model.rb"
