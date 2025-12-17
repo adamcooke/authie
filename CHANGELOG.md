@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.1.0](https://github.com/adamcooke/authie/compare/v5.0.0...v5.1.0) (2025-12-17)
+
+
+### Features
+
+* **session/config:** add configurable request ip lookup method ([#52](https://github.com/adamcooke/authie/issues/52)) ([df35c0a](https://github.com/adamcooke/authie/commit/df35c0a411a36c6e480d452bdb0fe38939974615))
+
 ## [5.0.0](https://github.com/adamcooke/authie/compare/v4.1.6...v5.0.0) (2025-02-20)
 
 
