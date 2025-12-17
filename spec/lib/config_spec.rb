@@ -105,4 +105,15 @@ RSpec.describe Authie::Config do
       expect(config.resolve_ip(request)).to eq '4.3.2.1'
     end
   end
+
+  describe '#lookup_ip_country' do
+    it 'returns nil when no backend is configured' do
+      expect(config.lookup_ip_country('1.2.3.4')).to be_nil
+    end
+
+    it 'calls the backend when configured' do
+      config.lookup_ip_country_backend = ->(ip) { "Country:#{ip}" }
+      expect(config.lookup_ip_country('1.2.3.4')).to eq 'Country:1.2.3.4'
+    end
+  end
 end

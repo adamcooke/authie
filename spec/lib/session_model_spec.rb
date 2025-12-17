@@ -44,6 +44,16 @@ RSpec.describe Authie::SessionModel do
       expect(new_session_model.user).to eq user
     end
 
+    it 'fetches user from database when @user not cached' do
+      # Create session directly with user_type/user_id to bypass user= setter
+      session = described_class.create!(user_type: 'User', user_id: user.id)
+      # Reload to get fresh instance without @user cached
+      reloaded = described_class.find(session.id)
+      expect(reloaded.instance_variable_defined?(:@user)).to be false
+      expect(reloaded.user).to eq user
+      expect(reloaded.instance_variable_get(:@user)).to eq user
+    end
+
     it 'returns nil if user_id is nil' do
       session_model.user_id = nil
       expect(session_model.user).to be nil
@@ -169,14 +179,13 @@ RSpec.describe Authie::SessionModel do
     end
 
     it 'stores values as JSON if configured to do so' do
-      Authie.config.serialize_coder = JSON
-      # Reload the class because the model was already loaded
-      load File.expand_path('../../lib/authie/session_model.rb', __dir__)
+      # Temporarily swap the serializer's coder to JSON without reloading class
+      original_coder = described_class.type_for_attribute(:data).coder
+      described_class.type_for_attribute(:data).instance_variable_set(:@coder, JSON)
       session_model.set(:hello, 'world')
       expect(session_model.read_attribute_before_type_cast('data')).to eq '{"hello":"world"}'
     ensure
-      Authie.config.serialize_coder = nil
-      load File.expand_path('../../lib/authie/session_model.rb', __dir__)
+      described_class.type_for_attribute(:data).instance_variable_set(:@coder, original_coder)
     end
   end
 
