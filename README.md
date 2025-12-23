@@ -2,9 +2,9 @@
 
 <a href="https://github.com/adamcooke/authie/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/adamcooke/authie/ci.yml?label=CI&logo=github"></a> <a href="https://rubygems.org/gems/authie"><img src="https://img.shields.io/gem/v/authie?label=RubyGem&logo=rubygems"></a> <a href="https://codeclimate.com/github/adamcooke/authie"><img src="https://img.shields.io/codeclimate/coverage/adamcooke/authie?label=Test%20Coverage&logo=codeclimate"></a>
 
-This is a Rails library which provides applications with a database-backed user
+This is a Rails library which provides applications with database-backed user
 sessions. This ensures that user sessions can be invalidated from the server and
-users activity can be easily tracked.
+users' activity can be easily tracked.
 
 The "traditional" way of simply setting a user ID in your session is insecure
 and unwise. If you simply do something like the example below, it means that anyone
@@ -39,7 +39,7 @@ As usual, just pop this in your Gemfile:
 gem 'authie', '~> 4.0'
 ```
 
-You will then need add the database tables Authie needs to your database. You
+You will then need to add the database tables Authie needs to your database. You
 should copy Authie's migrations and then migrate.
 
 ```
@@ -71,7 +71,7 @@ class SessionsController < ApplicationController
 end
 ```
 
-### Checking whether user's are logged in
+### Checking whether users are logged in
 
 On any subsequent request, you should make sure that your user is logged in.
 You may wish to implement a `login_required` controller method which is called
@@ -99,7 +99,7 @@ There are a few controller methods which you can call which will return informat
 
 - `current_user` - returns the currently logged in user
 - `auth_session` - returns the current auth session
-- `logged_in?` - returns a true if there's a session or false if no user is logged in
+- `logged_in?` - returns `true` if there's a session or `false` if no user is logged in
 
 ### Catching session errors
 
@@ -113,7 +113,7 @@ to catch within your application. The errors which will be raised are:
 - `Authie::Session::HostMismatch` - is raised when the session is used on a hostname
   that does not match that which created the session
 
-The easiest way to rescue these to use a `rescue_from`. For example:
+The easiest way to rescue these is to use a `rescue_from`. For example:
 
 ```ruby
 class ApplicationController < ActionController::Base
@@ -131,7 +131,7 @@ end
 
 ### Logging out
 
-In order to invalidate a session you can simply invalidate it.
+In order to invalidate a session you can simply call `invalidate` on it.
 
 ```ruby
 def logout
@@ -142,7 +142,7 @@ end
 
 ### Default session length
 
-By default, a session will last for however long it is being actively used in
+By default, a session will last for however long it is being actively used in a
 browser. If the user stops using your application, the session will last for
 12 hours before becoming invalid. You can change this:
 
@@ -167,7 +167,7 @@ end
 ```
 
 By default, persistent sessions will last for 2 months before requring the user
-logs in again. You can increase (or decrease) this if needed:
+to log in again. You can increase (or decrease) this if needed:
 
 ```ruby
 Authie.config.persistent_session_length = 12.months
@@ -187,7 +187,7 @@ end
 
 ### Storing additional data in the user session
 
-If you need to store additional information in your database-backed database
+If you need to store additional information in your database-backed
 session, then you can use the following methods to achieve this:
 
 ```ruby
@@ -200,7 +200,7 @@ auth_session.get :two_factor_seen_at
 You may wish to allow users to easily invalidate all sessions which aren't their
 current one. Some applications invalidate old sessions whenever a user changes
 their password. The `invalidate_others!` method can be called on any
-`Authie::Session` object and will invalidate all sessions which aren't itself.
+`Authie::Session` object to invalidate all other sessions belonging to the same user.
 
 ```ruby
 def change_password
@@ -241,7 +241,7 @@ def change_password
 end
 ```
 
-By default, a password will be said to have been recently seen if it has been
+By default, a password will be considered to have been recently seen if it has been
 seen in the last 10 minutes. You can change this configuration if needed:
 
 ```ruby
@@ -324,7 +324,7 @@ with the given attributes.
 
 Authie 4.0 introduces a number of changes to the library which are worth noting when upgrading from any version less than 4.
 
-- Authie 4.0 removes the impersonation features which may make a re-appearance in a futre version.
+- Authie 4.0 removes the impersonation features which may make a re-appearance in a future version.
 - All previous callback/events have been replaced with standard ActiveSupport instrumentation notifications.
 - `Authie::SessionModel` has been introduced to represent the instance of the underlying database record.
 - Various methods on Authie::Session (more commonly known as `auth_session`) have been renamed as follows.
@@ -339,6 +339,6 @@ Authie 4.0 introduces a number of changes to the library which are worth noting 
 - When starting a session using `Authie::Session.start` or `create_auth_session` you can provide the following additional options:
   - `persistent: true` to mark the session as persistent (i.e. give it an expiry time)
   - `see_password: true` to set the password seen timestamp at the same time as creation
-- If the `extend_session_expiry_on_touch` config option is set to true (default is false), the expiry time for a persistent session will be extended whenver a session is touched.
+- If the `extend_session_expiry_on_touch` config option is set to true (default is false), the expiry time for a persistent session will be extended whenever a session is touched.
 - When making a request, the session will be touched **after** the action rather than before. Previously, the `touch_auth_session` method was added before every action and it both validated the session and touched it. Now, there are two separate methods - `validate_auth_session` which is run before every action and `touch_auth_session` runs after every action. If you don't want to touch a session in a request you can either use `skip_around_action :touch_auth_session` or call `skip_touch_auth_session!` anywhere in the action.
 - A new config option called `session_token_length` is available which allows you to change the length of the random token used for sessions (default 64).
