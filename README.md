@@ -320,6 +320,108 @@ with the given attributes.
 - `inactive_session_error.authie` - when a session is validated when inactive. Provides `:session` argument.
 - `host_mismatch_error.authie` - when a session is validated and the host does not match. Provides `:session` argument.
 
+## Testing
+
+### Devise
+
+If you are using Authie with Devise then this will ease the testing by extended the Devise sign_in test method.  This means you can this to an existing Devise driven app but not need to change any tests.
+
+```rb
+# spec/support/authie.rb
+# this code is to extend the devise sign_in method to ensure that it
+# sets up the authie session as well so that the tests will pass instead
+# of trying to log the user out for not having an active authie session
+module Authie
+  module Test
+    module ControllerHelpers
+      def sign_in(resource_or_scope, scope: nil)
+        super
+        user       = resource_or_scope
+        browser_id = SecureRandom.uuid
+        session    = Authie::SessionModel.create!(
+          user:       user,
+          login_at:   Time.current,
+          login_ip:   '1.2.3.4',
+          browser_id: browser_id,
+          active:     true
+        )
+
+        if block_given?
+          yield(session)
+          session.save!
+        end
+
+        cookies[:browser_id]   = browser_id
+        cookies[:user_session] = session.temporary_token
+        session
+      end
+    end
+  end
+end
+```
+
+Now add it to your `spec/[rails|spec]_helper.rb` file:
+
+```rb
+# make sure you have this line, or require the file manually:
+Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
+#require 'support/authie'
+
+# ...snip...
+  config.include Devise::Test::ControllerHelpers, :type => :controller
+  config.include Authie::Test::ControllerHelpers, :type => :controller # <-- this must come after the devise one
+# ...snip...
+```
+
+### Capybara
+
+When using Capybara we can ensure that the browser driver recieves the cookies so the test cases stop being redirected to the sign in page.  This means you do not need to modify existing test code that uses Warden.
+
+```rb
+# spec/support/session_helpers.rb
+module Authie
+  module Features
+    module SessionHelpers
+      def sign_in(user)
+        login_as user, :scope => user.class.name.tableize.singularize.to_sym
+        browser_id = SecureRandom.uuid
+        session    = Authie::SessionModel.create!(
+          user:       user,
+          login_at:   Time.current,
+          login_ip:   '1.2.3.4',
+          browser_id: browser_id,
+          active:     true
+        )
+
+        if block_given?
+          yield(session)
+          session.save!
+        end
+
+        headers ||= {}
+        Rack::Utils.set_cookie_header!(headers, "browser_id", browser_id)
+        Rack::Utils.set_cookie_header!(headers, "user_session", session.temporary_token)
+        Capybara.current_session.driver.browser.set_cookie(headers["Set-Cookie"])
+        session
+      end
+    end
+  end
+end
+```
+
+Now add it to your `spec/[rails|spec]_helper.rb` file:
+
+```
+# make sure you have this line, or require the file manually:
+Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
+#require 'support/session_helpers'
+
+# ...snip...
+  config.include Warden::Test::Helpers, :type => :feature
+  config.include Authie::Features::SessionHelpers, :type => :feature # should come after warden
+# ...snip...
+```
+
 ## Differences for Authie 4.0
 
 Authie 4.0 introduces a number of changes to the library which are worth noting when upgrading from any version less than 4.
