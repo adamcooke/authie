@@ -320,6 +320,32 @@ with the given attributes.
 - `inactive_session_error.authie` - when a session is validated when inactive. Provides `:session` argument.
 - `host_mismatch_error.authie` - when a session is validated and the host does not match. Provides `:session` argument.
 
+## Using with Doorkeeper
+
+To prevent Authie from being used on Doorkeeper OAuth routes:
+
+```rb
+# config/routes.rb
+
+  # use_doorkeeper
+  use_doorkeeper do
+    controllers :tokens => "oauth_tokens"
+  end
+```
+
+Then create the controller with the authie methods skipped:
+
+```rb
+# oauth_tokens_controller.rb
+
+class OauthTokensController < Doorkeeper::TokensController
+  # don't do any authie stuff here
+  skip_before_action :set_browser_id
+  skip_before_action :validate_auth_session
+  skip_around_action :touch_auth_session
+end
+```
+
 ## Differences for Authie 4.0
 
 Authie 4.0 introduces a number of changes to the library which are worth noting when upgrading from any version less than 4.
