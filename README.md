@@ -36,7 +36,7 @@ The design goals behind Authie are:
 As usual, just pop this in your Gemfile:
 
 ```ruby
-gem 'authie', '~> 4.0'
+gem 'authie', '~> 5.0'
 ```
 
 You will then need add the database tables Authie needs to your database. You
