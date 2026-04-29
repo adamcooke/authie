@@ -28,12 +28,14 @@ module Authie
         proposed_browser_id = SecureRandom.uuid
         next if Authie::SessionModel.where(browser_id: proposed_browser_id).exists?
 
-        cookies[Authie.config.browser_id_cookie_name] = {
+        cookie_options = {
           value: proposed_browser_id,
           expires: 5.years.from_now,
           httponly: true,
           secure: @controller.request.ssl?
         }
+        cookie_options[:domain] = Authie.config.cookie_domain if Authie.config.cookie_domain
+        cookies[Authie.config.browser_id_cookie_name] = cookie_options
         Authie.notify(:set_browser_id,
                       browser_id: proposed_browser_id,
                       controller: @controller)

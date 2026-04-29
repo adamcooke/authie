@@ -292,6 +292,19 @@ class LoginController < ApplicationController
 end
 ```
 
+### Sharing sessions across subdomains
+
+By default, Authie sets cookies without an explicit `domain`, which scopes
+them to the exact host that issued them. If you need a single session to
+be valid across multiple subdomains (for example `app.example.com` and
+`admin.example.com`) you can configure a cookie domain. Both the
+`user_session` cookie and the `browser_id` cookie will then be set with
+this domain.
+
+```ruby
+Authie.config.cookie_domain = '.example.com'
+```
+
 ## Storing IP address countries
 
 Authie has support for storing the country that an IP address is located in whenever they are saved to the database. To use this, you need to specify a backend to use in the Authie configuration. The backend should respond to `#call(ip_address)`.

@@ -118,6 +118,17 @@ RSpec.describe Authie::ControllerDelegate do
       expect(set_cookies['browser_id'][:expires]).to eq time + 5.years
     end
 
+    it 'does not set a cookie domain by default' do
+      delegate.set_browser_id
+      expect(set_cookies['browser_id']).to_not have_key(:domain)
+    end
+
+    it 'sets the cookie domain when configured' do
+      allow(Authie.config).to receive(:cookie_domain).and_return('.example.com')
+      delegate.set_browser_id
+      expect(set_cookies['browser_id'][:domain]).to eq '.example.com'
+    end
+
     it 'does not use brower IDs that already exist' do
       existing_session = Authie::SessionModel.create!(browser_id: SecureRandom.uuid)
       allow(SecureRandom).to receive(:uuid).and_return(existing_session.browser_id, SecureRandom.uuid)

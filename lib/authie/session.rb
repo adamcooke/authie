@@ -79,7 +79,10 @@ module Authie
     # @return [Authie::Session]
     def invalidate
       @session.invalidate!
+      # Always invalidate the cookie on the current domain. If a cookie_domain is set, also
+      # invalidate the cookie on that domain to ensure it is removed in all cases.
       cookies.delete(:user_session)
+      cookies.delete(:user_session, domain: Authie.config.cookie_domain) if Authie.config.cookie_domain
       self
     end
 
@@ -160,12 +163,14 @@ module Authie
     private
 
     def set_cookie(value = @session.temporary_token)
-      cookies[:user_session] = {
+      cookie_options = {
         value: value,
         secure: @controller.request.ssl?,
         httponly: true,
         expires: @session.expires_at
       }
+      cookie_options[:domain] = Authie.config.cookie_domain if Authie.config.cookie_domain
+      cookies[:user_session] = cookie_options
       Authie.notify(:cookie_updated, session: session)
       true
     end
@@ -215,10 +220,20 @@ module Authie
     end
 
     def validate_host
-      if @session.host && @session.host != @controller.request.host
+      request_host = @controller.request.host
+      matched = if Authie.config.cookie_domain
+                  suffix = Authie.config.cookie_domain.delete_prefix('.')
+                  request_host == suffix || request_host.end_with?(".#{suffix}")
+                elsif @session.host
+                  @session.host == request_host
+                else
+                  true
+                end
+
+      unless matched
         invalidate
         Authie.notify(:host_mismatch_error, session: self)
-        raise HostMismatch.new("Session was created on #{@session.host} but accessed using #{@controller.request.host}",
+        raise HostMismatch.new("Session was created on #{@session.host} but accessed using #{request_host}",
                                self)
       end
 

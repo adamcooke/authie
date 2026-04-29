@@ -11,6 +11,7 @@ module Authie
     attr_accessor :lookup_ip_country_backend
     attr_accessor :serialize_coder
     attr_accessor :ip_lookup_method
+    attr_accessor :cookie_domain
 
     def initialize
       set_defaults
@@ -40,6 +41,7 @@ module Authie
       @lookup_ip_country_backend = nil
       @serialize_coder = ActiveRecord::Coders::YAMLColumn
       @ip_lookup_method = :ip
+      @cookie_domain = nil
     end
   end
 

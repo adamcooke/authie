@@ -96,6 +96,44 @@ RSpec.describe Authie::Session do
       controller.request.headers['Host'] = 'example.com'
       expect(session.validate).to eq session
     end
+
+    shared_examples 'a configured cookie domain' do
+      it 'allows requests on the apex domain' do
+        session_model.update!(host: 'app.example.com')
+        controller.request.headers['Host'] = 'example.com'
+        expect(session.validate).to eq session
+      end
+
+      it 'allows requests on a subdomain' do
+        session_model.update!(host: 'app.example.com')
+        controller.request.headers['Host'] = 'admin.example.com'
+        expect(session.validate).to eq session
+      end
+
+      it 'rejects requests on a host that merely ends with the suffix' do
+        session_model.update!(host: 'app.example.com')
+        controller.request.headers['Host'] = 'evil-example.com'
+        expect { session.validate }.to raise_error Authie::Session::HostMismatch
+      end
+
+      it 'rejects requests on an unrelated host' do
+        session_model.update!(host: 'app.example.com')
+        controller.request.headers['Host'] = 'attacker.test'
+        expect { session.validate }.to raise_error Authie::Session::HostMismatch
+      end
+    end
+
+    context 'when cookie_domain is set with a leading dot' do
+      before { allow(Authie.config).to receive(:cookie_domain).and_return('.example.com') }
+
+      it_behaves_like 'a configured cookie domain'
+    end
+
+    context 'when cookie_domain is set without a leading dot' do
+      before { allow(Authie.config).to receive(:cookie_domain).and_return('example.com') }
+
+      it_behaves_like 'a configured cookie domain'
+    end
   end
 
   describe '#persist' do
@@ -127,6 +165,21 @@ RSpec.describe Authie::Session do
       expect(controller.send(:cookies)['user_session']).to eq session_model.temporary_token
       session.invalidate
       expect(controller.send(:cookies)['user_session']).to be nil
+    end
+
+    it 'deletes both the host-scoped and domain-scoped cookies when a cookie_domain is configured' do
+      allow(Authie.config).to receive(:cookie_domain).and_return('.example.com')
+      session.start
+      expect(controller.send(:cookies)).to receive(:delete).with(:user_session).ordered
+      expect(controller.send(:cookies)).to receive(:delete).with(:user_session, domain: '.example.com').ordered
+      session.invalidate
+    end
+
+    it 'only deletes the host-scoped cookie when no cookie_domain is configured' do
+      session.start
+      expect(controller.send(:cookies)).to receive(:delete).with(:user_session)
+      expect(controller.send(:cookies)).to_not receive(:delete).with(:user_session, anything)
+      session.invalidate
     end
   end
 
@@ -323,6 +376,17 @@ RSpec.describe Authie::Session do
       expect(Authie).to receive(:notify) # for cookies
       expect(Authie).to receive(:notify).with(:session_start, session: session)
       session.start
+    end
+
+    it 'does not set a cookie domain by default' do
+      session.start
+      expect(set_cookies['user_session']).to_not have_key(:domain)
+    end
+
+    it 'sets the cookie domain when configured' do
+      allow(Authie.config).to receive(:cookie_domain).and_return('.example.com')
+      session.start
+      expect(set_cookies['user_session'][:domain]).to eq '.example.com'
     end
   end
 

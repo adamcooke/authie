@@ -69,6 +69,17 @@ RSpec.describe Authie::Config do
     end
   end
 
+  describe '#cookie_domain' do
+    it 'returns nil by default' do
+      expect(config.cookie_domain).to be nil
+    end
+
+    it 'returns an overriden value' do
+      config.cookie_domain = '.example.com'
+      expect(config.cookie_domain).to eq '.example.com'
+    end
+  end
+
   describe '#ip_lookup_method' do
     it 'returns the default value' do
       expect(config.ip_lookup_method).to eq :ip
